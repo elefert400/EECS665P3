@@ -48,6 +48,8 @@ public:
 	virtual bool nameAnalysis(SymbolTable *) override;
 private:
 	DeclListNode * myDeclList;
+	//List<Scope> root_scope;
+
 };
 
 class TypeNode : public ASTNode{
@@ -96,6 +98,7 @@ public:
 	void unparse(std::ostream& out, int indent) override;
 private:
 	ExpNode * myTgt;
+
 };
 
 class IdNode : public ExpNode{
@@ -559,6 +562,7 @@ public:
 	bool nameAnalysis(SymbolTable * symTab) override;
 private:
 	TypeNode * myType;
+	
 	//Note that VarDeclNode does not have it's own 
 	// id field, it is inherited from the superclass
 	
