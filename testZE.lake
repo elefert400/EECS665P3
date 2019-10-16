@@ -1,0 +1,9 @@
+int x;
+int y;
+bool bu;
+void Func(int a, bool b){
+    x = 5;
+}
+void main(){
+    Func(y, bu);
+}

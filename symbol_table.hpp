@@ -35,7 +35,7 @@ class SemSymbol {
 
         virtual size_t GetLine(){ return m_line; }
         virtual size_t GetCol(){ return m_col; }
-        virtual void SetType(std::string type) = 0;
+        virtual bool SetType(std::string type) = 0;
         virtual void SetId(std::string Id);
         virtual void SetDeclared(bool isDeclared);
 		virtual std::string GetType();
@@ -46,13 +46,15 @@ class SemSymbol {
 class FuncSemSym : SemSymbol{
     private:
         std::string m_returnType;
-		std::list<std::string> m_argsList;
+		std::list<std::string>* m_argsList;
+		std::string m_name;
+
     public:
         FuncSemSym() : SemSymbol(){ }
 		void SetArgsList(std::list<std::string>* argsList);
-		void SetType(std::string returnType);
+		//sets the RETURN TYPE ONLY
+		bool SetType(std::string returnType);
 		void SetId(std::string Id);
-		void SetDeclared(bool isDeclared);
 		//returns int -> int -> bool format of type as single string
 		std::string GetType();
 		std::string GetId();
@@ -62,15 +64,17 @@ class FuncSemSym : SemSymbol{
 class VarSemSym : SemSymbol{
 	private:
 		std::string m_type;
+		std::string m_name;
+		bool m_isDeclared;
 	public:
 		VarSemSym() : SemSymbol(){ }
-		void SetType(std::string returnType);
+		bool SetType(std::string type);
 		void SetId(std::string Id);
 		void SetDeclared(bool isDeclared);
 		//returns int -> int -> bool format of type as single string
-		std::string GetType();
-		std::string GetId();
-		bool GetDeclared();
+		std::string GetType(){ return m_type; }
+		std::string GetId(){ return m_name; }
+		bool GetDeclared(){ return m_isDeclared; }
 };
 
 //A single scope. The symbol table is broken down into a 
@@ -87,7 +91,8 @@ class ScopeTable {
 		// that the symbol does not exist within the
 		// current scope.
 		/*added by Z/E*/
-		void PushBack(SemSymbol* sym);
+		/*Error#1: only check current scope at top of Symbol Table*/
+		void Insert(SemSymbol* sym);
 		bool CheckDeclared(std::string);
 	private:
 		HashMap<std::string, SemSymbol *> * symbols;
@@ -102,9 +107,12 @@ class SymbolTable{
 		void addFront(ScopeTable* scope);
 		//pops front of SymbolTable returning a ScopeTable
 		ScopeTable* pop();
+		/*Error#2: iterate through list to check all scopes for 
+				   given string in form of semSym*/
 		bool CheckDeclared(std::string);
 	private:
 		std::list<ScopeTable *> * scopeTableChain;
+		bool nameAnalyisFail;
 };
 
 	

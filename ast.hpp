@@ -135,8 +135,11 @@ public:
 	: DeclNode(id->getLine(), id->getCol(), id), myType(type){ }
 	void unparse(std::ostream& out, int indent) override;
 	virtual TypeNode * getTypeNode() { return myType; }
+	//Inherits string getDeclaredName() from superclass DeclNode
+
 private:
 	TypeNode * myType;
+	//Inherits IdNode * myID; from superclass DeclNode
 };
 
 
@@ -145,6 +148,7 @@ public:
 	FormalsListNode(std::list<FormalDeclNode *>* formalsIn)
 	: ASTNode(0, 0), myFormals(formalsIn){ }
 	void unparse(std::ostream& out, int indent) override;
+	bool nameAnalysis(SymbolTable * symTab) override;
 private:
 	std::list<FormalDeclNode *> * myFormals;
 };
@@ -211,6 +215,7 @@ class IntNode : public TypeNode{
 public:
 	IntNode(size_t lIn, size_t cIn) : TypeNode(lIn, cIn){}
 	void unparse(std::ostream& out, int indent) override;
+	bool nameAnalysis(SymbolTable * symTab);
 };
 
 class BoolNode : public TypeNode{
