@@ -56,7 +56,7 @@ class TypeNode : public ASTNode{
 public:
 	TypeNode(size_t lineIn, size_t colIn);
 	void unparse(std::ostream&, int) override = 0;
-	virtual void setPtrDepth(size_t depth); 
+	virtual void setPtrDepth(size_t depth);
 	virtual size_t getPtrDepth(){ return myPtrDepth; }
 	virtual void printIndirection(std::ostream& out);
 private:
@@ -66,7 +66,7 @@ private:
 
 class DeclListNode : public ASTNode{
 public:
-	DeclListNode(std::list<DeclNode *> * decls) 
+	DeclListNode(std::list<DeclNode *> * decls)
 	: ASTNode(0,0){
         	myDecls = decls;
 	}
@@ -77,8 +77,8 @@ private:
 };
 
 class VarDeclListNode : public ASTNode{
-public: 
-	VarDeclListNode(std::list<VarDeclNode *> * decls) 
+public:
+	VarDeclListNode(std::list<VarDeclNode *> * decls)
 	: ASTNode(0, 0), myDecls(decls){ }
 	virtual void unparse(std::ostream&, int);
 	virtual bool nameAnalysis(SymbolTable *);
@@ -110,7 +110,10 @@ private:
 	std::string myStrVal;
 	//A good way to do name analysis is to associate each
 	// identifier in the program with the symbol it references
-	SemSymbol * mySymbol;
+	/*
+	made it nullptr and it will get changed later
+	*/
+	SemSymbol * mySymbol = nullptr;
 };
 
 
@@ -122,7 +125,7 @@ public:
 
 class DeclNode : public ASTNode{
 public:
-	DeclNode(size_t l, size_t c, IdNode *); 
+	DeclNode(size_t l, size_t c, IdNode *);
 	std::string getDeclaredName(){ return myID->getString(); }
 	void unparse(std::ostream& out, int indent) override =0;
 protected:
@@ -131,7 +134,7 @@ protected:
 
 class FormalDeclNode : public DeclNode{
 public:
-	FormalDeclNode(TypeNode * type, IdNode * id) 
+	FormalDeclNode(TypeNode * type, IdNode * id)
 	: DeclNode(id->getLine(), id->getCol(), id), myType(type){ }
 	void unparse(std::ostream& out, int indent) override;
 	virtual TypeNode * getTypeNode() { return myType; }
@@ -155,7 +158,7 @@ private:
 
 class ExpListNode : public ASTNode{
 public:
-	ExpListNode(std::list<ExpNode *> * exps) 
+	ExpListNode(std::list<ExpNode *> * exps)
 	: ASTNode(0,0), myExps(exps){ }
 	void unparse(std::ostream& out, int indent) override;
 private:
@@ -164,7 +167,7 @@ private:
 
 class StmtListNode : public ASTNode{
 public:
-	StmtListNode(std::list<StmtNode *> * stmtsIn) 
+	StmtListNode(std::list<StmtNode *> * stmtsIn)
 	: ASTNode(0,0), myStmts(stmtsIn){ }
 	void unparse(std::ostream& out, int indent) override;
 	virtual bool nameAnalysis(SymbolTable * symTab) override;
@@ -174,7 +177,7 @@ private:
 
 class FnBodyNode : public ASTNode{
 public:
-	FnBodyNode(size_t lIn, size_t cIn, VarDeclListNode * decls, StmtListNode * stmts) 
+	FnBodyNode(size_t lIn, size_t cIn, VarDeclListNode * decls, StmtListNode * stmts)
 	: ASTNode(lIn, cIn){
 		myStmtList = stmts;
 		myVarDecls = decls;
@@ -189,10 +192,10 @@ private:
 class FnDeclNode : public DeclNode{
 public:
 	FnDeclNode(
-		TypeNode * retASTNode, 
-		IdNode * id, 
-		FormalsListNode * formals, 
-		FnBodyNode * fnBody) 
+		TypeNode * retASTNode,
+		IdNode * id,
+		FormalsListNode * formals,
+		FnBodyNode * fnBody)
 		: DeclNode(id->getLine(),id->getCol(), id)
 	{
 		myFormals = formals;
@@ -206,7 +209,7 @@ private:
 	FormalsListNode * myFormals;
 	FnBodyNode * myBody;
 	TypeNode * myRetAST;
-	//Note that FnDeclNode does not have it's own 
+	//Note that FnDeclNode does not have it's own
 	// myId field. Instead, it uses it's inherited
 	// myDeclaredID field from the DeclNode
 };
@@ -216,19 +219,22 @@ public:
 	IntNode(size_t lIn, size_t cIn) : TypeNode(lIn, cIn){}
 	void unparse(std::ostream& out, int indent) override;
 	bool nameAnalysis(SymbolTable * symTab);
+	std::string getType(){ return "Int"; }
 };
 
 class BoolNode : public TypeNode{
 public:
 	BoolNode(size_t lIn, size_t cIn) : TypeNode(lIn, cIn) { }
 	void unparse(std::ostream& out, int indent) override;
+	std::string getType(){ return "Bool"; }
 };
 
 class VoidNode : public TypeNode{
 public:
-	VoidNode(size_t lIn, size_t cIn) 
+	VoidNode(size_t lIn, size_t cIn)
 	: TypeNode(lIn, cIn){}
 	void unparse(std::ostream& out, int indent) override;
+	std::string getType(){ return "Void"; }
 };
 
 class IntLitNode : public ExpNode{
@@ -294,7 +300,7 @@ private:
 
 class UnaryExpNode : public ExpNode {
 public:
-	UnaryExpNode(size_t lIn, size_t cIn, ExpNode * expIn) 
+	UnaryExpNode(size_t lIn, size_t cIn, ExpNode * expIn)
 	: ExpNode(lIn, cIn){
 		this->myExp = expIn;
 	}
@@ -320,7 +326,7 @@ public:
 class BinaryExpNode : public ExpNode{
 public:
 	BinaryExpNode(
-		size_t lIn, size_t cIn, 
+		size_t lIn, size_t cIn,
 		ExpNode * exp1, ExpNode * exp2)
 	: ExpNode(lIn, cIn) {
 		this->myExp1 = exp1;
@@ -335,18 +341,18 @@ protected:
 
 class PlusNode : public BinaryExpNode{
 public:
-	PlusNode(size_t lIn, size_t cIn, 
-		ExpNode * exp1, ExpNode * exp2) 
+	PlusNode(size_t lIn, size_t cIn,
+		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(lIn, cIn, exp1, exp2) { }
-	virtual std::string myOp() override { return "+"; } 
+	virtual std::string myOp() override { return "+"; }
 };
 
 class MinusNode : public BinaryExpNode{
 public:
-	MinusNode(size_t lIn, size_t cIn, 
+	MinusNode(size_t lIn, size_t cIn,
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(lIn, cIn, exp1, exp2){ }
-	virtual std::string myOp() override { return "-"; } 
+	virtual std::string myOp() override { return "-"; }
 };
 
 class TimesNode : public BinaryExpNode{
@@ -354,7 +360,7 @@ public:
 	TimesNode(size_t lIn, size_t cIn,
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(lIn, cIn, exp1, exp2){ }
-	virtual std::string myOp() override { return "*"; } 
+	virtual std::string myOp() override { return "*"; }
 };
 
 class DivideNode : public BinaryExpNode{
@@ -362,71 +368,71 @@ public:
 	DivideNode(size_t lIn, size_t cIn,
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(lIn, cIn, exp1, exp2){ }
-	virtual std::string myOp() override { return "/"; } 
+	virtual std::string myOp() override { return "/"; }
 };
 
 class AndNode : public BinaryExpNode{
 public:
-	AndNode(size_t lIn, size_t cIn, 
+	AndNode(size_t lIn, size_t cIn,
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(lIn, cIn, exp1, exp2){ }
-	virtual std::string myOp() override { return " and "; } 
+	virtual std::string myOp() override { return " and "; }
 };
 
 class OrNode : public BinaryExpNode{
 public:
-	OrNode(size_t lIn, size_t cIn, 
+	OrNode(size_t lIn, size_t cIn,
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(lIn, cIn, exp1, exp2){ }
-	virtual std::string myOp() override { return " or "; } 
+	virtual std::string myOp() override { return " or "; }
 };
 
 class EqualsNode : public BinaryExpNode{
 public:
-	EqualsNode(size_t lineIn, size_t colIn, 
+	EqualsNode(size_t lineIn, size_t colIn,
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(lineIn, colIn, exp1, exp2){ }
-	virtual std::string myOp() override { return "=="; } 
+	virtual std::string myOp() override { return "=="; }
 };
 
 class NotEqualsNode : public BinaryExpNode{
 public:
-	NotEqualsNode(size_t lineIn, size_t colIn, 
+	NotEqualsNode(size_t lineIn, size_t colIn,
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(lineIn, colIn, exp1, exp2){ }
-	virtual std::string myOp() override { return "!="; } 
+	virtual std::string myOp() override { return "!="; }
 };
 
 class LessNode : public BinaryExpNode{
 public:
-	LessNode(size_t lineIn, size_t colIn, 
+	LessNode(size_t lineIn, size_t colIn,
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(lineIn, colIn, exp1, exp2){ }
-	virtual std::string myOp() override { return "<"; } 
+	virtual std::string myOp() override { return "<"; }
 };
 
 class GreaterNode : public BinaryExpNode{
 public:
-	GreaterNode(size_t lineIn, size_t colIn, 
+	GreaterNode(size_t lineIn, size_t colIn,
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(lineIn, colIn, exp1, exp2){ }
-	virtual std::string myOp() override { return ">"; } 
+	virtual std::string myOp() override { return ">"; }
 };
 
 class LessEqNode : public BinaryExpNode{
 public:
-	LessEqNode(size_t lineIn, size_t colIn, 
+	LessEqNode(size_t lineIn, size_t colIn,
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(lineIn, colIn, exp1, exp2){ }
-	virtual std::string myOp() override { return "<="; } 
+	virtual std::string myOp() override { return "<="; }
 };
 
 class GreaterEqNode : public BinaryExpNode{
 public:
-	GreaterEqNode(size_t lineIn, size_t colIn, 
+	GreaterEqNode(size_t lineIn, size_t colIn,
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(lineIn, colIn, exp1, exp2){ }
-	virtual std::string myOp() override { return ">="; } 
+	virtual std::string myOp() override { return ">="; }
 };
 
 class AssignStmtNode : public StmtNode{
@@ -446,7 +452,7 @@ public:
 	: StmtNode(exp->getLine(), exp->getCol()){
 		if (exp->getLine() == 0){
 			throw InternalError("0 pos");
-		}	
+		}
 		myExp = exp;
 	}
 	void unparse(std::ostream& out, int indent) override;
@@ -560,17 +566,17 @@ private:
 
 class VarDeclNode : public DeclNode{
 public:
-	VarDeclNode(TypeNode * type, IdNode * id) 
+	VarDeclNode(TypeNode * type, IdNode * id)
 	: DeclNode(id->getLine(), id->getCol(), id), myType(type){ }
 	void unparse(std::ostream& out, int indent) override;
 	TypeNode * getTypeNode(){ return myType; }
 	bool nameAnalysis(SymbolTable * symTab) override;
 private:
 	TypeNode * myType;
-	
-	//Note that VarDeclNode does not have it's own 
+
+	//Note that VarDeclNode does not have it's own
 	// id field, it is inherited from the superclass
-	
+
 };
 
 } //End namespace LAKE

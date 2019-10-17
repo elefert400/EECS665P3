@@ -58,17 +58,18 @@ bool ScopeTable::CheckDeclared(std::string check){
 	return false;
 }
 
-void ScopeTable::Insert(SemSymbol* sym){
+bool ScopeTable::Insert(SemSymbol* sym){
 	std::string myName = sym->getId();
 	std::pair< HashMap<std::string, SemSymbol *>::iterator, bool> ret;
-	ret = HashMap->insert(std::pair<std::string, SemSymbol *> (myName, sym);
+	ret = HashMap->insert(std::pair<std::string, SemSymbol *> (myName, sym));
 	if(ret.second == false)
 	{
-		return;
+		return true;
 	}
 	else{
 		//error 1
 		std::cerr << sym->getLine() << "," << sym->getCol() << "Multiply declared identifier" << std::endl;
+		return false;
 	}
 }
 
@@ -99,5 +100,10 @@ bool SymbolTable::CheckDeclared(std::string check)
 		//error message handled in stmt name_analysis
 		return false;
 	}
+}
+
+bool addSym(SemSymbol* newSym){
+	ScopeTable* top = scopeTableChain->front();
+	return top->Insert(new);
 }
 }

@@ -8,7 +8,7 @@ void ProgramNode::unparse(std::ostream& out, int indent){
 }
 
 void DeclListNode::unparse(std::ostream& out, int indent){
-	for (std::list<DeclNode *>::iterator 
+	for (std::list<DeclNode *>::iterator
 		it=myDecls->begin();
 		it != myDecls->end(); ++it){
 	    DeclNode * elt = *it;
@@ -174,12 +174,12 @@ void DerefNode::unparse(std::ostream& out, int indent){
 }
 
 void IdNode::unparse(std::ostream& out, int indent){
-	if (indent < 0){ 
-		throw new InternalError("negative indent"); 
+	if (indent < 0){
+		throw new InternalError("negative indent");
 	}
 	out << myStrVal;
 	if (mySymbol != NULL){
-		out << "(TODO)";
+		out << "(" << mySymbol->getType() << ")";
 	}
 }
 

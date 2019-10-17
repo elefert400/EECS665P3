@@ -46,12 +46,12 @@ class SemSymbol {
 class FuncSemSym : SemSymbol{
     private:
         std::string m_returnType;
-		std::list<std::string>* m_argsList;
+		std::string m_argsList;
 		std::string m_name;
 
     public:
         FuncSemSym() : SemSymbol(){ }
-		void SetArgsList(std::list<std::string>* argsList);
+		void SetArgsList(std::string argsList);
 		//sets the RETURN TYPE ONLY
 		bool SetType(std::string returnType);
 		void SetId(std::string Id);
@@ -96,7 +96,7 @@ class ScopeTable {
 		// current scope.
 		/*added by Z/E*/
 		/*Error#1: only check current scope at top of Symbol Table*/
-		void Insert(SemSymbol* sym);
+		bool Insert(SemSymbol* sym);
 		bool CheckDeclared(std::string check);
 	private:
 		HashMap<std::string, SemSymbol *> * symbols;
@@ -114,6 +114,8 @@ class SymbolTable{
 		/*Error#2: iterate through list to check all scopes for
 				   given string in form of semSym*/
 		bool CheckDeclared(std::string check);
+		//adds to the front scope in the scope table
+		bool addSym(SemSymbol* newSym);
 	private:
 		std::list<ScopeTable *> * scopeTableChain;
 		bool nameAnalyisFail;
