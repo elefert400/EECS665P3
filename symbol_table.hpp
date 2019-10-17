@@ -14,11 +14,11 @@ using namespace std;
 namespace lake{
 
 //A semantic symbol, which represents a single
-// variable, function, etc. Semantic symbols 
-// exist for the lifetime of a scope in the 
-// symbol table. 
+// variable, function, etc. Semantic symbols
+// exist for the lifetime of a scope in the
+// symbol table.
 class SemSymbol {
-	//TODO add the fields that 
+	//TODO add the fields that
 	// each semantic symbol should track
 	// (i.e. the kind of the symbol (either a variable or function)
 	// and functions to get/set those fields
@@ -55,10 +55,12 @@ class FuncSemSym : SemSymbol{
 		//sets the RETURN TYPE ONLY
 		bool SetType(std::string returnType);
 		void SetId(std::string Id);
+		void SetLineNum(size_t newLine) { m_line = newLine; }
+		void SetColumnNum(size_t newColumn) { m_col = newColumn; }
 		//returns int -> int -> bool format of type as single string
-		std::string GetType();
-		std::string GetId();
-		bool GetDeclared();
+		std::string GetType() { return m_returnType; }
+		std::string GetId() { return m_name; }
+		bool GetDeclared() { return true; }
 };
 //added by Z/E
 class VarSemSym : SemSymbol{
@@ -71,14 +73,16 @@ class VarSemSym : SemSymbol{
 		bool SetType(std::string type);
 		void SetId(std::string Id);
 		void SetDeclared(bool isDeclared);
+		void SetLineNum(size_t newLine) { m_line = newLine; }
+		void SetColumnNum(size_t newColumn) { m_col = newColumn; }
 		//returns int -> int -> bool format of type as single string
 		std::string GetType(){ return m_type; }
 		std::string GetId(){ return m_name; }
 		bool GetDeclared(){ return m_isDeclared; }
 };
 
-//A single scope. The symbol table is broken down into a 
-// chain of scope tables, and each scope table holds 
+//A single scope. The symbol table is broken down into a
+// chain of scope tables, and each scope table holds
 // semantic symbols for a single scope. For example,
 // the globals scope will be represented by a ScopeTable,
 // and the contents of each function can be represented by
@@ -93,7 +97,7 @@ class ScopeTable {
 		/*added by Z/E*/
 		/*Error#1: only check current scope at top of Symbol Table*/
 		void Insert(SemSymbol* sym);
-		bool CheckDeclared(std::string);
+		bool CheckDeclared(std::string check);
 	private:
 		HashMap<std::string, SemSymbol *> * symbols;
 };
@@ -103,19 +107,19 @@ class SymbolTable{
 		SymbolTable();
 		//TODO: add functions to create a new ScopeTable
 		// when a new scope is entered, drop a ScopeTable
-		// when a scope is exited, etc. 
-		void addFront(ScopeTable* scope);
+		// when a scope is exited, etc.
+		void addFront(ScopeTable* newScope);
 		//pops front of SymbolTable returning a ScopeTable
 		ScopeTable* pop();
-		/*Error#2: iterate through list to check all scopes for 
+		/*Error#2: iterate through list to check all scopes for
 				   given string in form of semSym*/
-		bool CheckDeclared(std::string);
+		bool CheckDeclared(std::string check);
 	private:
 		std::list<ScopeTable *> * scopeTableChain;
 		bool nameAnalyisFail;
 };
 
-	
+
 }
 
 #endif
