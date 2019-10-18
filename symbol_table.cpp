@@ -60,7 +60,7 @@ SymbolTable::SymbolTable(){
 
 bool ScopeTable::CheckDeclared(std::string check){
 	SemSymbol * mySem;
-	mySem = symbols[check];
+	mySem = symbols->at(check);
 	if(mySem->GetDeclared() == true)
 	{
 		return true;
