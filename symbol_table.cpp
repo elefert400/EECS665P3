@@ -26,14 +26,21 @@ void VarSemSym::SetDeclared(bool isDeclared){
 	m_isDeclared = isDeclared;
 }
 
-void FuncSemSym::SetArgsList(std::list<std::string>* argsList){
+void FuncSemSym::SetArgsList(std::string argsList){
 	m_argsList = argsList;
 }
 bool FuncSemSym::SetType(std::string returnType){
 	m_returnType = returnType;
 	return true;
 }
-void SetId(std::string Id){}
+void FuncSemSym::SetId(std::string Id){
+	m_name = Id;
+}
+std::string FuncSemSym::GetFullType(){
+	std::string fullType = m_argsList + "->" + m_returnType;
+	return fullType;
+}
+
 ScopeTable::ScopeTable(){
 	symbols = new HashMap<std::string, SemSymbol *>();
 }
@@ -58,10 +65,10 @@ bool ScopeTable::CheckDeclared(std::string check){
 	return false;
 }
 
-void ScopeTable::Insert(SemSymbol* sym){
+bool ScopeTable::Insert(SemSymbol* sym){
 	std::string myName = sym->GetId();
 	std::pair< HashMap<std::string, SemSymbol *>::iterator, bool> ret;
-	ret = HashMap->insert(std::pair<std::string, SemSymbol *> (myName, sym));
+	ret = symbols->insert(std::pair<std::string, SemSymbol *> (myName, sym));
 	if(ret.second == false)
 	{
 		return true;

@@ -60,6 +60,8 @@ class FuncSemSym : SemSymbol{
 		void SetId(std::string Id);
 		
 		//returns int -> int -> bool format of type as single string
+		std::string GetFullType();
+		//gets the return type only
 		std::string GetType() { return m_returnType; }
 		std::string GetId() { return m_name; }
 		bool GetDeclared() { return true; }
