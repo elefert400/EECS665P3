@@ -26,11 +26,11 @@ class SemSymbol {
         size_t m_line;
         size_t m_col;
         bool m_isDeclared;
-		std::string m_Id;
+		//std::string m_Id;
 
     public:
 		//may end up discarding constructor
-        SemSymbol(/*may need params*/);
+        //SemSymbol(/*may need params*/);
         virtual ~SemSymbol(){}
 		virtual void SetLineNum(size_t newLine) { m_line = newLine; }
 		virtual void SetColumnNum(size_t newColumn) { m_col = newColumn; }
@@ -53,7 +53,7 @@ class FuncSemSym : SemSymbol{
 		std::string m_name;
 
     public:
-        FuncSemSym() : SemSymbol(){ }
+        FuncSemSym(){ }
 		void SetArgsList(std::string argsList);
 		//sets the RETURN TYPE ONLY
 		bool SetType(std::string returnType);
@@ -72,15 +72,18 @@ class VarSemSym : SemSymbol{
 		std::string m_type;
 		std::string m_name;
 		bool m_isDeclared;
+		int m_ptrDepth;
 	public:
-		VarSemSym() : SemSymbol(){ }
+		VarSemSym(){ }
 		bool SetType(std::string type);
 		void SetId(std::string Id);
 		void SetDeclared(bool isDeclared);
+		void SetPtrDepth(int ptrDepth);
 		//returns int -> int -> bool format of type as single string
 		std::string GetType(){ return m_type; }
 		std::string GetId(){ return m_name; }
 		bool GetDeclared(){ return m_isDeclared; }
+		int GetPtrDepth(){ return m_ptrDepth; }
 };
 
 //A single scope. The symbol table is broken down into a

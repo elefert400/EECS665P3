@@ -59,6 +59,7 @@ public:
 	virtual void setPtrDepth(size_t depth);
 	virtual size_t getPtrDepth(){ return myPtrDepth; }
 	virtual void printIndirection(std::ostream& out);
+	virtual std::string GetType();
 private:
 	size_t myPtrDepth;
 };
@@ -106,6 +107,9 @@ public:
 	IdNode(IDToken * token);
 	void unparse(std::ostream& out, int indent) override;
 	virtual std::string getString();
+	//sets symbol
+	bool SetSymbol(SemSymbol* symbol){ mySymbol = symbol; }
+	
 private:
 	std::string myStrVal;
 	//A good way to do name analysis is to associate each
@@ -137,7 +141,8 @@ public:
 	FormalDeclNode(TypeNode * type, IdNode * id)
 	: DeclNode(id->getLine(), id->getCol(), id), myType(type){ }
 	void unparse(std::ostream& out, int indent) override;
-	virtual TypeNode * getTypeNode() { return myType; }
+	TypeNode * getTypeNode(){ return myType; }
+	std::string GetType(){ return(myType->GetType()); }
 	//Inherits string getDeclaredName() from superclass DeclNode
 
 private:
@@ -203,6 +208,7 @@ public:
 		myRetAST = retASTNode;
 	}
 	TypeNode * getReturnTypeNode(){ return myRetAST; }
+	std::string GetType(){ return(myRetAST->GetType()); }
 	void unparse(std::ostream& out, int indent) override;
 	bool nameAnalysis(SymbolTable * symTab) override;
 private:
@@ -219,14 +225,14 @@ public:
 	IntNode(size_t lIn, size_t cIn) : TypeNode(lIn, cIn){}
 	void unparse(std::ostream& out, int indent) override;
 	bool nameAnalysis(SymbolTable * symTab);
-	std::string getType(){ return "Int"; }
+	std::string GetType(){ return "Int"; }
 };
 
 class BoolNode : public TypeNode{
 public:
 	BoolNode(size_t lIn, size_t cIn) : TypeNode(lIn, cIn) { }
 	void unparse(std::ostream& out, int indent) override;
-	std::string getType(){ return "Bool"; }
+	std::string GetType(){ return "Bool"; }
 };
 
 class VoidNode : public TypeNode{
@@ -234,7 +240,7 @@ public:
 	VoidNode(size_t lIn, size_t cIn)
 	: TypeNode(lIn, cIn){}
 	void unparse(std::ostream& out, int indent) override;
-	std::string getType(){ return "Void"; }
+	std::string GetType(){ return "Void"; }
 };
 
 class IntLitNode : public ExpNode{

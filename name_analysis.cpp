@@ -65,6 +65,10 @@ bool VarDeclNode::nameAnalysis(SymbolTable * symTab){
 	TypeNode* varType = this->getTypeNode();
 	std::string varId = this->getDeclaredName();
 	VarSemSym* newSym = new VarSemSym();
+	newSym->SetPtrDepth(varType->getPtrDepth());
+	newSym->SetLineNum(varType->getLine());
+	newSym->SetColumnNum(varType->getCol());
+	newSym->SetType(varType->GetType());
 	return nameAnalysisOk;
 	// throw new ToDoError("[DELETE ME] I'm a varDecl"
 	// 	" you should add the information from my"	
@@ -84,13 +88,12 @@ bool FnDeclNode::nameAnalysis(SymbolTable * symTab){
 }
 
 bool FormalsListNode::nameAnalysis(SymbolTable* symTab){
-	FormalDeclNode* DeclNodeTemp;
+	FormalDeclNode* FormalDeclNodeTemp;
 	std::string formalsListString;
 	for (std::list<FormalDeclNode *>::iterator it=myFormals->begin(); it!=myFormals->end(); ++it){
-		DeclNodeTemp = *it;
-		std::string currArgType = DeclNodeTemp->GetType();
+		FormalDeclNodeTemp = *it;
+		std::string currArgType = FormalDeclNodeTemp->GetType();
 		formalsListString = formalsListString + "," + currArgType;
 	}
-
 }
 }

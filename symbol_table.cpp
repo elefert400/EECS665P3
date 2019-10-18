@@ -7,11 +7,11 @@ bool VarSemSym::SetType(std::string type){
 		NEED A WAY TO TELL IF IT IS A POINTER OR NOT AND FLAG THE DIFFEREN ERRORS
 		*/
 		//throw error
-		if(myPtrDepth == 0){
-			std::cerr << m_line << "," << m_col << "Non-function declared void"
-			return(false);
+		if(m_ptrDepth == 0){
+			std::cerr << m_line << "," << m_col << "Non-function declared void";
+			return false;
 		}
-		std::cerr << m_line << "," << m_col << "Invalid pointer type"
+		std::cerr << m_line << "," << m_col << "Invalid pointer type";
 		return false;
 	}
 	else{
@@ -24,6 +24,9 @@ void VarSemSym::SetId(std::string Id){
 }
 void VarSemSym::SetDeclared(bool isDeclared){
 	m_isDeclared = isDeclared;
+}
+void VarSemSym::SetPtrDepth(int ptrDepth){
+	m_ptrDepth = ptrDepth;
 }
 
 void FuncSemSym::SetArgsList(std::string argsList){
@@ -57,7 +60,7 @@ SymbolTable::SymbolTable(){
 
 bool ScopeTable::CheckDeclared(std::string check){
 	SemSymbol * mySem;
-	mySem = HashMap[check];
+	mySem = symbols[check];
 	if(mySem->GetDeclared() == true)
 	{
 		return true;
