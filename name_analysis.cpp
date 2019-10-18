@@ -306,4 +306,11 @@ bool ReadStmtNode::nameAnalysis(SymbolTable * symTab)
 	result = result && myExp->nameAnalysis(symTab);
 	return result;
 }
+
+bool WriteStmtNode::nameAnalysis(SymbolTable * symTab)
+{
+	bool result = true;
+	result = result && myExp->nameAnalysis(symTab);
+	return result;
+}
 }
