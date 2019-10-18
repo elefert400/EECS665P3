@@ -18,9 +18,14 @@ bool ProgramNode::nameAnalysis(SymbolTable * symTab){
 	return this->myDeclList->nameAnalysis(symTab);
 }
 
+bool TypeNode::nameAnalysis(SymbolTable * symTab)
+{
+	return true;
+}
+
 bool DeclListNode::nameAnalysis(SymbolTable * symTab){
 	bool result = true;
-	/*looping over list called myDecls 
+	/*looping over list called myDecls
 	that contains a variety of DeclNode(VarDeclNode||FnDeclNode)*/
 	for (auto decl : *myDecls){
 		//call NA on current iterations DeclNode
@@ -29,9 +34,21 @@ bool DeclListNode::nameAnalysis(SymbolTable * symTab){
 	return result;
 }
 
+bool ExpListNode::nameAnalysis(SymbolTable * symTab)
+{
+	bool result = true;
+	/*looping over list called myDecls
+	that contains a variety of DeclNode(VarDeclNode||FnDeclNode)*/
+	for (auto decl : *myExps){
+		//call NA on current iterations DeclNode
+		result = decl->nameAnalysis(symTab) && result;
+	}
+	return result;
+}
+
 bool VarDeclListNode::nameAnalysis(SymbolTable * symTab){
 	bool nameAnalysisOk = true;
-	/*looping over list called myDecls 
+	/*looping over list called myDecls
 	that contains VarDeclNode's*/
 	for (auto decl : *myDecls){
 		//call NA on current iteration VarDeclNode
@@ -39,14 +56,34 @@ bool VarDeclListNode::nameAnalysis(SymbolTable * symTab){
 	}
 	return nameAnalysisOk;
 	// throw new ToDoError("[DELETE ME] I'm a varDeclListNode"
-	// 	" you should iterate over my subtree, adding"	
+	// 	" you should iterate over my subtree, adding"
 	// 	" symbols as neccesary to the current scope"
 	// );
 }
 
+bool ExpNode::nameAnalysis(SymbolTable * symTab)
+{
+	return true;
+}
+
+bool DerefNode::nameAnalysis(SymbolTable * symTab)
+{
+	//needs to be filled in
+}
+
+bool IdNode::nameAnalysis(SymbolTable * symTab)
+{
+	if(symTab->CheckDeclared(myStrVal) == false)
+	{
+		return false;
+	}
+	SetSymbol(symTab->getThis(myStrVal));
+	return true;
+}
+
 bool StmtListNode::nameAnalysis(SymbolTable * symTab){
 	bool nameAnalysisOk = true;
-	/*looping over list called myStmts 
+	/*looping over list called myStmts
 	that contains a variety of StmtNode's*/
 	for (auto stmt : *myStmts){
 		//call NA on current iteration VarDeclNode
@@ -54,8 +91,8 @@ bool StmtListNode::nameAnalysis(SymbolTable * symTab){
 	}
 	return nameAnalysisOk;
 	// throw new ToDoError("[DELETE ME] I'm a stmtListNode"
-	// 	" you should iterate over my subtree, using"	
-	// 	" the symbols previously gathered to "	
+	// 	" you should iterate over my subtree, using"
+	// 	" the symbols previously gathered to "
 	// 	" see if variables are declared"
 	// );
 }
@@ -71,15 +108,30 @@ bool VarDeclNode::nameAnalysis(SymbolTable * symTab){
 	newSym->SetType(varType->GetType());
 	return nameAnalysisOk;
 	// throw new ToDoError("[DELETE ME] I'm a varDecl"
-	// 	" you should add the information from my"	
-	// 	" subtree to the symbolTable as a new"	
+	// 	" you should add the information from my"
+	// 	" subtree to the symbolTable as a new"
 	// 	" entry in the current scope table"
 	// );
 }
 
+bool FormalDeclNode::nameAnalysis(SymbolTable * symTab)
+{
+	bool nameAnalysisOk = true;
+	TypeNode* varType = this->getTypeNode();
+	std::string varId = this->getDeclaredName();
+	VarSemSym* newSym = new VarSemSym();
+	newSym->SetPtrDepth(varType->getPtrDepth());
+	newSym->SetLineNum(varType->getLine());
+	newSym->SetColumnNum(varType->getCol());
+	newSym->SetType(varType->GetType());
+	return nameAnalysisOk;
+}
 bool FnDeclNode::nameAnalysis(SymbolTable * symTab){
 	bool nameAnalysisOk = true;
-
+	
+	/*
+	needs to be filled in
+	*/
 	// throw new ToDoError("[DELETE ME] I'm an fnDecl."
 	// 	" you should add and make current a new"
 	// 	" scope table for my body"
@@ -96,4 +148,20 @@ bool FormalsListNode::nameAnalysis(SymbolTable* symTab){
 		formalsListString = formalsListString + "," + currArgType;
 	}
 }
+
+bool FnBodyNode::nameAnalysis(SymbolTable * symTab)
+{
+	bool result = true;
+	for (auto decl : *myStmtList){
+		//call NA on current iterations DeclNode
+		result = decl->nameAnalysis(symTab) && result;
+	}
+	for (auto decl : *myVarDecls){
+		//call NA on current iterations DeclNode
+		result = decl->nameAnalysis(symTab) && result;
+	}
+	return result;
+}
+
+
 }

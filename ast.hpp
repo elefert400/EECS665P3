@@ -45,7 +45,7 @@ public:
 	ProgramNode(DeclListNode *);
 	virtual ~ProgramNode(){ }
 	void unparse(std::ostream&, int) override;
-	virtual bool nameAnalysis(SymbolTable *) override;
+	virtual bool nameAnalysis(SymbolTable *symTab) override;
 private:
 	DeclListNode * myDeclList;
 	//List<Scope> root_scope;
@@ -60,6 +60,7 @@ public:
 	virtual size_t getPtrDepth(){ return myPtrDepth; }
 	virtual void printIndirection(std::ostream& out);
 	virtual std::string GetType();
+	virtual bool nameAnalysis(SymbolTable * symTab) override;
 private:
 	size_t myPtrDepth;
 };
@@ -82,7 +83,7 @@ public:
 	VarDeclListNode(std::list<VarDeclNode *> * decls)
 	: ASTNode(0, 0), myDecls(decls){ }
 	virtual void unparse(std::ostream&, int);
-	virtual bool nameAnalysis(SymbolTable *);
+	virtual bool nameAnalysis(SymbolTable * symTab);
 private:
 	std::list<VarDeclNode *> * myDecls;
 };
@@ -91,12 +92,14 @@ class ExpNode : public ASTNode{
 public:
 	ExpNode(size_t lIn, size_t cIn) : ASTNode(lIn, cIn){ }
 	virtual void unparse(std::ostream& out, int indent) override = 0;
+	virtual bool nameAnalysis(SymbolTable * symTab) override;
 };
 
 class DerefNode : public ExpNode {
 public:
 	DerefNode(size_t line, size_t column, ExpNode *);
 	void unparse(std::ostream& out, int indent) override;
+	virtual bool nameAnalysis(SymbolTable * symTab);
 private:
 	ExpNode * myTgt;
 
@@ -109,7 +112,7 @@ public:
 	virtual std::string getString();
 	//sets symbol
 	bool SetSymbol(SemSymbol* symbol){ mySymbol = symbol; }
-	
+	virtual bool nameAnalysis(SymbolTable * symTab);
 private:
 	std::string myStrVal;
 	//A good way to do name analysis is to associate each
@@ -125,6 +128,7 @@ class StmtNode : public ASTNode{
 public:
 	StmtNode(size_t lIn, size_t cIn) : ASTNode(lIn, cIn){ }
 	virtual void unparse(std::ostream& out, int indent) override = 0;
+	virtual bool nameAnalysis(SymbolTable * symTab) override = 0;
 };
 
 class DeclNode : public ASTNode{
@@ -132,6 +136,7 @@ public:
 	DeclNode(size_t l, size_t c, IdNode *);
 	std::string getDeclaredName(){ return myID->getString(); }
 	void unparse(std::ostream& out, int indent) override =0;
+	virtual bool nameAnalysis(SymbolTable * symTab) override = 0;
 protected:
 	IdNode * myID;
 };
@@ -144,7 +149,7 @@ public:
 	TypeNode * getTypeNode(){ return myType; }
 	std::string GetType(){ return(myType->GetType()); }
 	//Inherits string getDeclaredName() from superclass DeclNode
-
+	virtual bool nameAnalysis(SymbolTable * symTab);
 private:
 	TypeNode * myType;
 	//Inherits IdNode * myID; from superclass DeclNode
@@ -166,6 +171,7 @@ public:
 	ExpListNode(std::list<ExpNode *> * exps)
 	: ASTNode(0,0), myExps(exps){ }
 	void unparse(std::ostream& out, int indent) override;
+	bool nameAnalysis(SymbolTable * symTab) override;
 private:
 	std::list<ExpNode *> * myExps;
 };
@@ -188,6 +194,7 @@ public:
 		myVarDecls = decls;
 	}
 	void unparse(std::ostream& out, int indent) override;
+	virtual bool nameAnalysis(SymbolTable * symTab) override;
 private:
 	StmtListNode * myStmtList;
 	VarDeclListNode * myVarDecls;
@@ -226,6 +233,7 @@ public:
 	void unparse(std::ostream& out, int indent) override;
 	bool nameAnalysis(SymbolTable * symTab);
 	std::string GetType(){ return "Int"; }
+	bool nameAnalysis(SymbolTable * symTab) { return true; };
 };
 
 class BoolNode : public TypeNode{
@@ -233,6 +241,7 @@ public:
 	BoolNode(size_t lIn, size_t cIn) : TypeNode(lIn, cIn) { }
 	void unparse(std::ostream& out, int indent) override;
 	std::string GetType(){ return "Bool"; }
+	bool nameAnalysis(SymbolTable * symTab) { return true; };
 };
 
 class VoidNode : public TypeNode{
@@ -241,6 +250,7 @@ public:
 	: TypeNode(lIn, cIn){}
 	void unparse(std::ostream& out, int indent) override;
 	std::string GetType(){ return "Void"; }
+	bool nameAnalysis(SymbolTable * symTab) { return true; };
 };
 
 class IntLitNode : public ExpNode{
@@ -250,6 +260,7 @@ public:
 		myInt = token->value();
 	}
 	void unparse(std::ostream& out, int indent) override;
+	bool nameAnalysis(SymbolTable * symTab) { return true; };
 private:
 	int myInt;
 };
@@ -261,6 +272,7 @@ public:
 		myString = token->value();
 	}
 	void unparse(std::ostream& out, int indent) override;
+	bool nameAnalysis(SymbolTable * symTab) { return true; };
 private:
 	 std::string myString;
 };
@@ -270,12 +282,14 @@ class TrueNode : public ExpNode{
 public:
 	TrueNode(size_t lIn, size_t cIn): ExpNode(lIn, cIn){ }
 	void unparse(std::ostream& out, int indent) override;
+	bool nameAnalysis(SymbolTable * symTab) { return true; };
 };
 
 class FalseNode : public ExpNode{
 public:
 	FalseNode(size_t lIn, size_t cIn): ExpNode(lIn, cIn){ }
 	void unparse(std::ostream& out, int indent) override;
+	bool nameAnalysis(SymbolTable * symTab) { return true; };
 };
 
 class AssignNode : public ExpNode{

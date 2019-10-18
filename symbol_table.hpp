@@ -58,7 +58,7 @@ class FuncSemSym : SemSymbol{
 		//sets the RETURN TYPE ONLY
 		bool SetType(std::string returnType);
 		void SetId(std::string Id);
-		
+
 		//returns int -> int -> bool format of type as single string
 		std::string GetFullType();
 		//gets the return type only
@@ -103,6 +103,7 @@ class ScopeTable {
 		/*Error#1: only check current scope at top of Symbol Table*/
 		bool Insert(SemSymbol* sym);
 		bool CheckDeclared(std::string check);
+		SemSymbol* GetSem(std::string getThis);
 	private:
 		HashMap<std::string, SemSymbol *> * symbols;
 };
@@ -121,6 +122,8 @@ class SymbolTable{
 		bool CheckDeclared(std::string check);
 		//adds to the front scope in the scope table
 		bool addSym(SemSymbol* newSym);
+		//gets a semantic symbol from the top scope
+		SemSymbol* GetSem(std::string getThis);
 	private:
 		std::list<ScopeTable *> * scopeTableChain;
 };

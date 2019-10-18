@@ -115,4 +115,15 @@ bool addSym(SemSymbol* newSym){
 	ScopeTable* top = scopeTableChain->front();
 	return top->Insert(new);
 }
+
+SemSymbol* SymbolTable::GetSem(std::string getThis)
+{
+	ScopeTable* front = scopeTableChain->front();
+	return front->GetSem(getThis);
+}
+
+SemSymbol* ScopeTable::GetSem(std::string getThis)
+{
+	return symbols[getThis];
+}
 }
