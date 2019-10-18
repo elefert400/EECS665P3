@@ -10,12 +10,20 @@ bool ASTNode::nameAnalysis(SymbolTable * symTab){
 }
 
 bool ProgramNode::nameAnalysis(SymbolTable * symTab){
+	//create new empty scope
+	ScopeTable* globalScope = new ScopeTable();
+	//add new empty scope to symbol table
+	symTab->addFront(globalScope);
+	//call NA on list to continue
 	return this->myDeclList->nameAnalysis(symTab);
 }
 
 bool DeclListNode::nameAnalysis(SymbolTable * symTab){
 	bool result = true;
+	/*looping over list called myDecls 
+	that contains a variety of DeclNode(VarDeclNode||FnDeclNode)*/
 	for (auto decl : *myDecls){
+		//call NA on current iterations DeclNode
 		result = decl->nameAnalysis(symTab) && result;
 	}
 	return result;
@@ -23,39 +31,46 @@ bool DeclListNode::nameAnalysis(SymbolTable * symTab){
 
 bool VarDeclListNode::nameAnalysis(SymbolTable * symTab){
 	bool nameAnalysisOk = true;
-	//calls name analysis on all the vardecls and gets if they were successful or not
+	/*looping over list called myDecls 
+	that contains VarDeclNode's*/
 	for (auto decl : *myDecls){
+		//call NA on current iteration VarDeclNode
 		nameAnalysisOk = decl->nameAnalysis(symTab) && nameAnalysisOk;
 	}
+	return nameAnalysisOk;
 	// throw new ToDoError("[DELETE ME] I'm a varDeclListNode"
-	// 	" you should iterate over my subtree, adding"
+	// 	" you should iterate over my subtree, adding"	
 	// 	" symbols as neccesary to the current scope"
 	// );
-	return nameAnalysisOk;
 }
 
 bool StmtListNode::nameAnalysis(SymbolTable * symTab){
 	bool nameAnalysisOk = true;
-	throw new ToDoError("[DELETE ME] I'm a stmtListNode"
-		" you should iterate over my subtree, using"
-		" the symbols previously gathered to "
-		" see if variables are declared"
-	);
+	/*looping over list called myStmts 
+	that contains a variety of StmtNode's*/
+	for (auto stmt : *myStmts){
+		//call NA on current iteration VarDeclNode
+		nameAnalysisOk = stmt->nameAnalysis(symTab) && nameAnalysisOk;
+	}
 	return nameAnalysisOk;
+	// throw new ToDoError("[DELETE ME] I'm a stmtListNode"
+	// 	" you should iterate over my subtree, using"	
+	// 	" the symbols previously gathered to "	
+	// 	" see if variables are declared"
+	// );
 }
 
 bool VarDeclNode::nameAnalysis(SymbolTable * symTab){
 	bool nameAnalysisOk = true;
-	SemSymbol* myVar = new VarSemSym();
-	myVar->SetType(myType->getType());
-	myVar->SetId(myID->getString());
-	nameAnalysisOk = symTab->addSym(myVar);
+	TypeNode* varType = this->getTypeNode();
+	std::string varId = this->getDeclaredName();
+	VarSemSym* newSym = new VarSemSym();
+	return nameAnalysisOk;
 	// throw new ToDoError("[DELETE ME] I'm a varDecl"
-	// 	" you should add the information from my"
-	// 	" subtree to the symbolTable as a new"
+	// 	" you should add the information from my"	
+	// 	" subtree to the symbolTable as a new"	
 	// 	" entry in the current scope table"
 	// );
-	return nameAnalysisOk;
 }
 
 bool FnDeclNode::nameAnalysis(SymbolTable * symTab){

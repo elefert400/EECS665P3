@@ -58,8 +58,8 @@ bool ScopeTable::CheckDeclared(std::string check){
 	return false;
 }
 
-bool ScopeTable::Insert(SemSymbol* sym){
-	std::string myName = sym->getId();
+void ScopeTable::Insert(SemSymbol* sym){
+	std::string myName = sym->GetId();
 	std::pair< HashMap<std::string, SemSymbol *>::iterator, bool> ret;
 	ret = HashMap->insert(std::pair<std::string, SemSymbol *> (myName, sym));
 	if(ret.second == false)
@@ -68,8 +68,7 @@ bool ScopeTable::Insert(SemSymbol* sym){
 	}
 	else{
 		//error 1
-		std::cerr << sym->getLine() << "," << sym->getCol() << "Multiply declared identifier" << std::endl;
-		return false;
+		std::cerr << sym->GetLine() << "," << sym->GetCol() << "Multiply declared identifier" << "\n";
 	}
 }
 

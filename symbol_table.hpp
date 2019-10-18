@@ -32,12 +32,15 @@ class SemSymbol {
 		//may end up discarding constructor
         SemSymbol(/*may need params*/);
         virtual ~SemSymbol(){}
-
+		virtual void SetLineNum(size_t newLine) { m_line = newLine; }
+		virtual void SetColumnNum(size_t newColumn) { m_col = newColumn; }
         virtual size_t GetLine(){ return m_line; }
         virtual size_t GetCol(){ return m_col; }
+
         virtual bool SetType(std::string type) = 0;
         virtual void SetId(std::string Id);
         virtual void SetDeclared(bool isDeclared);
+
 		virtual std::string GetType();
 		virtual std::string GetId();
 		virtual bool GetDeclared();
@@ -55,8 +58,7 @@ class FuncSemSym : SemSymbol{
 		//sets the RETURN TYPE ONLY
 		bool SetType(std::string returnType);
 		void SetId(std::string Id);
-		void SetLineNum(size_t newLine) { m_line = newLine; }
-		void SetColumnNum(size_t newColumn) { m_col = newColumn; }
+		
 		//returns int -> int -> bool format of type as single string
 		std::string GetType() { return m_returnType; }
 		std::string GetId() { return m_name; }
@@ -73,8 +75,6 @@ class VarSemSym : SemSymbol{
 		bool SetType(std::string type);
 		void SetId(std::string Id);
 		void SetDeclared(bool isDeclared);
-		void SetLineNum(size_t newLine) { m_line = newLine; }
-		void SetColumnNum(size_t newColumn) { m_col = newColumn; }
 		//returns int -> int -> bool format of type as single string
 		std::string GetType(){ return m_type; }
 		std::string GetId(){ return m_name; }
@@ -118,7 +118,6 @@ class SymbolTable{
 		bool addSym(SemSymbol* newSym);
 	private:
 		std::list<ScopeTable *> * scopeTableChain;
-		bool nameAnalyisFail;
 };
 
 
