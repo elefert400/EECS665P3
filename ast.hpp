@@ -545,6 +545,7 @@ public:
 		myDecls = decls;
 	}
 	void unparse(std::ostream& out, int indent) override;
+	bool nameAnalysis(SymbolTable * symTab) override;
 private:
 	ExpNode * myExp;
 	VarDeclListNode * myDecls;
@@ -562,6 +563,7 @@ public:
 		myStmtsF = stmtsF;
 	}
 	void unparse(std::ostream& out, int indent) override;
+	bool nameAnalysis(SymbolTable * symTab) override;
 private:
 	ExpNode * myExp;
 	VarDeclListNode * myDeclsT;
@@ -579,6 +581,7 @@ public:
 		myStmts = stmts;
 	}
 	void unparse(std::ostream& out, int indent) override;
+	bool nameAnalysis(SymbolTable * symTab) override;
 private:
 	ExpNode * myExp;
 	VarDeclListNode * myDecls;
@@ -603,6 +606,7 @@ public:
 		myExp = exp;
 	}
 	void unparse(std::ostream& out, int indent) override;
+	bool nameAnalysis(SymbolTable * symTab) override;
 private:
 	ExpNode * myExp;
 };

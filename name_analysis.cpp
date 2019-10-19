@@ -313,4 +313,87 @@ bool WriteStmtNode::nameAnalysis(SymbolTable * symTab)
 	result = result && myExp->nameAnalysis(symTab);
 	return result;
 }
+
+bool IfStmtNode::nameAnalysis(SymbolTable * symTab)
+{
+	bool result = true;
+	ScopeTable * top = new ScopeTable();
+	symTab->addFront(top);
+	for (auto decl : *myDecls){
+		//call NA on current iterations DeclNode
+		result = decl->nameAnalysis(symTab) && result;
+	}
+	for (auto decl : *myStmts){
+		//call NA on current iterations DeclNode
+		result = decl->nameAnalysis(symTab) && result;
+	}
+	symTab->pop();
+	return result;
+}
+
+bool IfElseStmtNode::nameAnalysis(SymbolTable * symTab)
+{
+	bool result = true;
+	ScopeTable * ifT = new ScopeTable();
+	symTab->addFront(ifT);
+	for (auto decl : *myDeclsT){
+		//call NA on current iterations DeclNode
+		result = decl->nameAnalysis(symTab) && result;
+	}
+	for (auto decl : *myStmtsT){
+		//call NA on current iterations DeclNode
+		result = decl->nameAnalysis(symTab) && result;
+	}
+	symTab->pop();
+
+	ScopeTable * ifF = new ScopeTable();
+	symTab->addFront(ifF);
+	for (auto decl : *myDeclsT){
+		//call NA on current iterations DeclNode
+		result = decl->nameAnalysis(symTab) && result;
+	}
+	for (auto decl : *myStmtsT){
+		//call NA on current iterations DeclNode
+		result = decl->nameAnalysis(symTab) && result;
+	}
+	symTab->pop();
+	return result;
+}
+
+bool WhileStmtNode::nameAnalysis(SymbolTable * symTab)
+{
+	bool result = true;
+	ScopeTable * top = new ScopeTable();
+	symTab->addFront(top);
+	for (auto decl : *myDecls){
+		//call NA on current iterations DeclNode
+		result = decl->nameAnalysis(symTab) && result;
+	}
+	for (auto decl : *myStmts){
+		//call NA on current iterations DeclNode
+		result = decl->nameAnalysis(symTab) && result;
+	}
+	symTab->pop();
+	return result;
+}
+
+bool CallStmtNode::nameAnalysis(SymbolTable * symTab)
+{
+	bool result = true;
+	for (auto decl : *myCallExp){
+		//call NA on current iterations DeclNode
+		result = decl->nameAnalysis(symTab) && result;
+	}
+	return result;
+}
+
+bool ReturnStmtNode::nameAnalysis(SymbolTable * symTab)
+{
+	bool result = true;
+	for (auto decl : *myExp){
+		//call NA on current iterations DeclNode
+		result = decl->nameAnalysis(symTab) && result;
+	}
+	return result;
+}
 }
