@@ -43,6 +43,9 @@ std::string FuncSemSym::GetFullType(){
 	std::string fullType = m_argsList + "->" + m_returnType;
 	return fullType;
 }
+std::string FuncSemSym::GetArgsType(){
+
+}
 
 ScopeTable::ScopeTable(){
 	symbols = new HashMap<std::string, SemSymbol *>();
@@ -113,7 +116,7 @@ bool SymbolTable::CheckDeclared(std::string check)
 
 bool addSym(SemSymbol* newSym){
 	ScopeTable* top = scopeTableChain->front();
-	return top->Insert(new);
+	return top->Insert(newSym);
 }
 
 SemSymbol* SymbolTable::GetSem(std::string getThis)

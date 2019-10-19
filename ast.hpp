@@ -138,6 +138,7 @@ public:
 	void unparse(std::ostream& out, int indent) override =0;
 	virtual bool nameAnalysis(SymbolTable * symTab) override = 0;
 protected:
+	//may need to switch this to ExpNode*
 	IdNode * myID;
 };
 
@@ -162,8 +163,10 @@ public:
 	: ASTNode(0, 0), myFormals(formalsIn){ }
 	void unparse(std::ostream& out, int indent) override;
 	bool nameAnalysis(SymbolTable * symTab) override;
+	std::string GetFormalsType(){ return formalsTypeString; }
 private:
 	std::list<FormalDeclNode *> * myFormals;
+	std::string formalsTypeString;
 };
 
 class ExpListNode : public ASTNode{

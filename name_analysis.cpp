@@ -68,6 +68,8 @@ bool ExpNode::nameAnalysis(SymbolTable * symTab)
 
 bool DerefNode::nameAnalysis(SymbolTable * symTab)
 {
+	bool result = true;
+	return(result && myTgt->nameAnalysis(symTab));
 	//needs to be filled in
 }
 
@@ -77,7 +79,7 @@ bool IdNode::nameAnalysis(SymbolTable * symTab)
 	{
 		return false;
 	}
-	SetSymbol(symTab->getThis(myStrVal));
+	SetSymbol(symTab->GetSem(myStrVal));
 	return true;
 }
 
@@ -102,11 +104,14 @@ bool VarDeclNode::nameAnalysis(SymbolTable * symTab){
 	TypeNode* varType = this->getTypeNode();
 	std::string varId = this->getDeclaredName();
 	VarSemSym* newSym = new VarSemSym();
-	newSym->SetPtrDepth(varType->getPtrDepth());
+	if(varType->getPtrDepth()){
+		newSym->SetPtrDepth(varType->getPtrDepth());
+	}	
 	newSym->SetLineNum(varType->getLine());
 	newSym->SetColumnNum(varType->getCol());
 	newSym->SetType(varType->GetType());
-	return nameAnalysisOk;
+	
+	return(nameAnalysisOk && symTab->addSym(newSym));
 	// throw new ToDoError("[DELETE ME] I'm a varDecl"
 	// 	" you should add the information from my"
 	// 	" subtree to the symbolTable as a new"
@@ -124,11 +129,25 @@ bool FormalDeclNode::nameAnalysis(SymbolTable * symTab)
 	newSym->SetLineNum(varType->getLine());
 	newSym->SetColumnNum(varType->getCol());
 	newSym->SetType(varType->GetType());
-	return nameAnalysisOk;
+	return(nameAnalysisOk && symTab->addSym(newSym));
 }
 bool FnDeclNode::nameAnalysis(SymbolTable * symTab){
 	bool nameAnalysisOk = true;
+	//create new FnSemSym
+	FuncSemSym* newSym = new FuncSemSym();
+	newSym->SetType(this->GetType());
+	newSym->SetId(this->getDeclaredName());
 
+	//create new scope and add it to the front of symTab
+	ScopeTable* newScope = new ScopeTable();
+	symTab->addFront(newScope);	
+	//call NA on formalsList and fnBodyNode
+	nameAnalysisOk = (nameAnalysisOk && myFormals->nameAnalysis(symTab));
+	nameAnalysisOk = (nameAnalysisOk && myBody->nameAnalysis(symTab));
+	//pop scope
+	symTab->pop();
+	newSym->SetArgsList(myFormals->GetFormalsType());
+	return(nameAnalysisOk && symTab->addSym(newSym));
 	/*
 	needs to be filled in
 	*/
@@ -136,25 +155,29 @@ bool FnDeclNode::nameAnalysis(SymbolTable * symTab){
 	// 	" you should add and make current a new"
 	// 	" scope table for my body"
 	// );
-	return nameAnalysisOk;
 }
 
 bool FormalsListNode::nameAnalysis(SymbolTable* symTab){
+	bool result = true;
 	FormalDeclNode* FormalDeclNodeTemp;
-	std::string formalsListString;
 	for (std::list<FormalDeclNode *>::iterator it=myFormals->begin(); it!=myFormals->end(); ++it){
 		FormalDeclNodeTemp = *it;
+		//call NA on current formalDeclNode
+		result = FormalDeclNodeTemp->nameAnalysis(symTab) && result;
+		//get type of the formalDeclNode that was just processed
 		std::string currArgType = FormalDeclNodeTemp->GetType();
-		formalsListString = formalsListString + "," + currArgType;
+		//append the type onto formalsTypeString for later access in FnDeclNode as its argsType;
+		formalsTypeString = formalsTypeString + "," + currArgType;
 	}
+	return result;
 }
 
 bool FnBodyNode::nameAnalysis(SymbolTable * symTab)
 {
 	bool result = true;
-	for (auto decl : *myStmtList){
+	for (auto stmt : *myStmtList){
 		//call NA on current iterations DeclNode
-		result = decl->nameAnalysis(symTab) && result;
+		result = stmt->nameAnalysis(symTab) && result;
 	}
 	for (auto decl : *myVarDecls){
 		//call NA on current iterations DeclNode
@@ -175,9 +198,9 @@ bool CallExpNode::nameAnalysis(SymbolTable * symTab)
 {
 	bool result = true;
 	result = myId->nameAnalysis(symTab) && result;
-	for (auto decl : *myExpList){
+	for (auto exp : *myExpList){
 		//call NA on current iterations DeclNode
-		result = decl->nameAnalysis(symTab) && result;
+		result = exp->nameAnalysis(symTab) && result;
 	}
 	return result;
 }
@@ -281,8 +304,7 @@ bool GreaterEqNode::nameAnalysis(SymbolTable * symTab)
 bool AssignStmtNode::nameAnalysis(SymbolTable * symTab)
 {
 	bool result = true;
-	result = myExp1->nameAnalysis(symTab) && result;
-	result = myExp2->nameAnalysis(symTab) && result;
+	result = myAssign->nameAnalysis(symTab) && result;
 	return result;
 }
 
