@@ -19,46 +19,35 @@ bool VarSemSym::SetType(std::string type){
 		return true;
 	}
 }
-void VarSemSym::SetId(std::string Id){
-	m_name = Id;
-}
-void VarSemSym::SetDeclared(bool isDeclared){
-	m_isDeclared = isDeclared;
-}
-void VarSemSym::SetPtrDepth(int ptrDepth){
-	m_ptrDepth = ptrDepth;
-}
-void FuncSemSym::SetDeclared(bool isDeclared){
-	m_isDeclared = isDeclared;
-}
-void FuncSemSym::SetArgsList(std::string argsList){
-	m_argsList = argsList;
-}
-bool FuncSemSym::SetType(std::string returnType){
-	m_returnType = returnType;
-	return true;
-}
-void FuncSemSym::SetId(std::string Id){
-	m_name = Id;
-}
 std::string FuncSemSym::GetFullType(){
 	std::string fullType = m_argsList + "->" + m_returnType;
 	return fullType;
 }
-
+// void VarSemSym::SetId(std::string Id){
+// 	m_name = Id;
+// }
+// void VarSemSym::SetDeclared(bool isDeclared){
+// 	m_isDeclared = isDeclared;
+// }
+// void VarSemSym::SetPtrDepth(int ptrDepth){
+// 	m_ptrDepth = ptrDepth;
+// }
+// void FuncSemSym::SetDeclared(bool isDeclared){
+// 	m_isDeclared = isDeclared;
+// }
+// void FuncSemSym::SetArgsList(std::string argsList){
+// 	m_argsList = argsList;
+// }
+// bool FuncSemSym::SetType(std::string returnType){
+// 	m_returnType = returnType;
+// 	return true;
+// }
+// void FuncSemSym::SetId(std::string Id){
+// 	m_name = Id;
+// }
 
 ScopeTable::ScopeTable(){
 	symbols = new HashMap<std::string, SemSymbol *>();
-}
-
-SymbolTable::SymbolTable(){
-	//TODO: implement the list of hashtables approach
-	// to building a symbol table:
-	// Upon entry to a scope a new scope table will be
-	// entered into the front of the chain and upon exit the
-	// latest scope table will be removed from the front of
-	// the chain.
-	scopeTableChain = new std::list<ScopeTable *>();
 }
 
 bool ScopeTable::CheckDeclared(std::string check){
@@ -69,6 +58,11 @@ bool ScopeTable::CheckDeclared(std::string check){
 		return true;
 	}
 	return false;
+}
+
+SemSymbol* ScopeTable::GetSem(std::string getThis)
+{
+	return symbols->at(getThis);
 }
 
 bool ScopeTable::Insert(SemSymbol* sym){
@@ -84,6 +78,16 @@ bool ScopeTable::Insert(SemSymbol* sym){
 		std::cerr << sym->GetLine() << "," << sym->GetCol() << "Multiply declared identifier" << "\n";
 		return false;
 	}
+}
+
+SymbolTable::SymbolTable(){
+	//TODO: implement the list of hashtables approach
+	// to building a symbol table:
+	// Upon entry to a scope a new scope table will be
+	// entered into the front of the chain and upon exit the
+	// latest scope table will be removed from the front of
+	// the chain.
+	scopeTableChain = new std::list<ScopeTable *>();
 }
 
 void SymbolTable::addFront(ScopeTable* newScope)
@@ -122,8 +126,5 @@ SemSymbol* SymbolTable::GetSem(std::string getThis)
 	return front->GetSem(getThis);
 }
 
-SemSymbol* ScopeTable::GetSem(std::string getThis)
-{
-	return symbols->at(getThis);
-}
+
 }

@@ -34,19 +34,19 @@ class SemSymbol {
 		//may end up discarding constructor
         SemSymbol(){ }
         
-		virtual void SetLineNum(size_t newLine);
-		virtual void SetColumnNum(size_t newColumn);
-        size_t GetLine(){ return m_line; }
-        size_t GetCol(){ return m_col; }
+        virtual size_t GetLine(){ return m_line; }
+        virtual size_t GetCol(){ return m_col; }
+		virtual void SetLineNum(size_t newLine)=0;
+		virtual void SetColumnNum(size_t newColumn)=0;
 
-        virtual bool SetType(std::string type);
-        virtual void SetId(std::string Id);
-        virtual void SetDeclared(bool isDeclared);
-		virtual std::string GetFullType();
-		virtual std::string GetType();
-		virtual std::string GetId();
-		virtual bool GetDeclared();
-		virtual char GetRepChar();
+        virtual bool SetType(std::string type)=0;
+        virtual void SetId(std::string Id)=0;
+        virtual void SetDeclared(bool isDeclared)=0;
+		virtual std::string GetFullType()=0;
+		virtual std::string GetType()=0;
+		virtual std::string GetId()=0;
+		virtual bool GetDeclared()=0;
+		virtual char GetRepChar()=0;
 };
 //added by Z/E
 class FuncSemSym : public SemSymbol{
@@ -59,21 +59,23 @@ class FuncSemSym : public SemSymbol{
 
     public:
         FuncSemSym() : SemSymbol(){ }
-		void SetArgsList(std::string argsList);
-		//sets the RETURN TYPE ONLY
-		bool SetType(std::string returnType);
-		void SetId(std::string Id);
-		void SetDeclared(bool isDeclared);
 
+		void SetLineNum(size_t newLine){ m_line = newLine; }
+		void SetColumnNum(size_t newColumn){ m_col = newColumn; }
+
+		//sets the return type only
+		bool SetType(std::string returnType){ m_returnType = returnType; return true; }
+		void SetId(std::string Id){ m_name = Id; }
+		void SetDeclared(bool isDeclared){ m_isDeclared = isDeclared; }
+		
 		//returns (int,int) -> bool format of type as single string
 		std::string GetFullType();
 		//gets the return type only
-		std::string GetType() { return m_returnType; }
-		std::string GetId() { return m_name; }
-		bool GetDeclared() { return true; }
+		std::string GetType(){ return m_returnType; }
+		std::string GetId(){ return m_name; }
+		bool GetDeclared(){ return true; }
 		char GetRepChar(){ return 'f'; }
-		void SetLineNum(size_t newLine) { m_line = newLine; }
-		void SetColumnNum(size_t newColumn) { m_col = newColumn; }
+		void SetArgsList(std::string argsList){ m_argsList = argsList; }
 };
 //added by Z/E
 class VarSemSym : public SemSymbol{
@@ -84,19 +86,22 @@ class VarSemSym : public SemSymbol{
 		int m_ptrDepth;
 	public:
 		VarSemSym() : SemSymbol(){ }
+
+		void SetLineNum(size_t newLine){ m_line = newLine; }
+		void SetColumnNum(size_t newColumn){ m_col = newColumn; }
+
 		bool SetType(std::string type);
-		void SetId(std::string Id);
-		void SetDeclared(bool isDeclared);
-		void SetPtrDepth(int ptrDepth);
+		void SetId(std::string Id){ m_name = Id; }
+		void SetDeclared(bool isDeclared){ m_isDeclared = isDeclared; }
+
+		std::string GetFullType(){ return m_type; }
 		//returns int -> int -> bool format of type as single string
 		std::string GetType(){ return m_type; }
 		std::string GetId(){ return m_name; }
 		bool GetDeclared(){ return m_isDeclared; }
-		int GetPtrDepth(){ return m_ptrDepth; }
 		char GetRepChar(){ return 'v'; }
-		void SetLineNum(size_t newLine) { m_line = newLine; }
-		void SetColumnNum(size_t newColumn) { m_col = newColumn; }
-		std::string GetFullType(){ return(m_type); }
+		int GetPtrDepth(){ return m_ptrDepth; }		
+		void SetPtrDepth(int ptrDepth){ m_ptrDepth = ptrDepth; }
 };
 
 //A single scope. The symbol table is broken down into a
