@@ -128,7 +128,7 @@ bool FormalDeclNode::nameAnalysis(SymbolTable * symTab)
 }
 bool FnDeclNode::nameAnalysis(SymbolTable * symTab){
 	bool nameAnalysisOk = true;
-	
+
 	/*
 	needs to be filled in
 	*/
@@ -163,5 +163,154 @@ bool FnBodyNode::nameAnalysis(SymbolTable * symTab)
 	return result;
 }
 
+bool AssignNode::nameAnalysis(SymbolTable* symTab)
+{
+	bool result = true;
+	result = result && myTgt->nameAnalysis(symTab);
+	result = result && mySrc->nameAnalysis(symTab);
+	return result;
+}
 
+bool CallExpNode::nameAnalysis(SymbolTable * symTab)
+{
+	bool result = true;
+	result = myId->nameAnalysis(symTab) && result;
+	for (auto decl : *myExpList){
+		//call NA on current iterations DeclNode
+		result = decl->nameAnalysis(symTab) && result;
+	}
+	return result;
+}
+
+bool PlusNode::nameAnalysis(SymbolTable * symTab)
+{
+	bool result = true;
+	result = myExp1->nameAnalysis(symTab) && result;
+	result = myExp2->nameAnalysis(symTab) && result;
+	return result;
+}
+
+bool MinusNode::nameAnalysis(SymbolTable * symTab)
+{
+	bool result = true;
+	result = myExp1->nameAnalysis(symTab) && result;
+	result = myExp2->nameAnalysis(symTab) && result;
+	return result;
+}
+
+bool TimesNode::nameAnalysis(SymbolTable * symTab)
+{
+	bool result = true;
+	result = myExp1->nameAnalysis(symTab) && result;
+	result = myExp2->nameAnalysis(symTab) && result;
+	return result;
+}
+
+bool DivideNode::nameAnalysis(SymbolTable * symTab)
+{
+	bool result = true;
+	result = myExp1->nameAnalysis(symTab) && result;
+	result = myExp2->nameAnalysis(symTab) && result;
+	return result;
+}
+
+bool AndNode::nameAnalysis(SymbolTable * symTab)
+{
+	bool result = true;
+	result = myExp1->nameAnalysis(symTab) && result;
+	result = myExp2->nameAnalysis(symTab) && result;
+	return result;
+}
+
+bool OrNode::nameAnalysis(SymbolTable * symTab)
+{
+	bool result = true;
+	result = myExp1->nameAnalysis(symTab) && result;
+	result = myExp2->nameAnalysis(symTab) && result;
+	return result;
+}
+
+bool EqualsNode::nameAnalysis(SymbolTable * symTab)
+{
+	bool result = true;
+	result = myExp1->nameAnalysis(symTab) && result;
+	result = myExp2->nameAnalysis(symTab) && result;
+	return result;
+}
+
+bool NotEqualsNode::nameAnalysis(SymbolTable * symTab)
+{
+	bool result = true;
+	result = myExp1->nameAnalysis(symTab) && result;
+	result = myExp2->nameAnalysis(symTab) && result;
+	return result;
+}
+
+bool LessNode::nameAnalysis(SymbolTable * symTab)
+{
+	bool result = true;
+	result = myExp1->nameAnalysis(symTab) && result;
+	result = myExp2->nameAnalysis(symTab) && result;
+	return result;
+}
+
+bool GreaterNode::nameAnalysis(SymbolTable * symTab)
+{
+	bool result = true;
+	result = myExp1->nameAnalysis(symTab) && result;
+	result = myExp2->nameAnalysis(symTab) && result;
+	return result;
+}
+
+bool LessEqNode::nameAnalysis(SymbolTable * symTab)
+{
+	bool result = true;
+	result = myExp1->nameAnalysis(symTab) && result;
+	result = myExp2->nameAnalysis(symTab) && result;
+	return result;
+}
+
+bool GreaterEqNode::nameAnalysis(SymbolTable * symTab)
+{
+	bool result = true;
+	result = myExp1->nameAnalysis(symTab) && result;
+	result = myExp2->nameAnalysis(symTab) && result;
+	return result;
+}
+
+bool AssignStmtNode::nameAnalysis(SymbolTable * symTab)
+{
+	bool result = true;
+	result = myExp1->nameAnalysis(symTab) && result;
+	result = myExp2->nameAnalysis(symTab) && result;
+	return result;
+}
+
+bool PostIncStmtNode::nameAnalysis(SymbolTable * symTab)
+{
+	bool result = true;
+	result = result && myExp->nameAnalysis(symTab);
+	return result;
+}
+
+bool PostDecStmtNode::nameAnalysis(SymbolTable * symTab)
+{
+	bool result = true;
+	result = result && myExp->nameAnalysis(symTab);
+	return result;
+}
+
+bool ReadStmtNode::nameAnalysis(SymbolTable * symTab)
+{
+	bool result = true;
+	result = result && myExp->nameAnalysis(symTab);
+	return result;
+}
+
+bool WriteStmtNode::nameAnalysis(SymbolTable * symTab)
+{
+	bool result = true;
+	result = result && myExp->nameAnalysis(symTab);
+	return result;
+}
 }

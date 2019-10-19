@@ -300,6 +300,7 @@ public:
 		mySrc = src;
 	}
 	void unparse(std::ostream& out, int indent) override;
+	bool nameAnalysis(SymbolTable * symTab) override;
 private:
 	ExpNode * myTgt;
 	ExpNode * mySrc;
@@ -313,6 +314,7 @@ public:
 		myExpList = expList;
 	}
 	void unparse(std::ostream& out, int indent) override;
+	bool nameAnalysis(SymbolTable * symTab) override;
 private:
 	IdNode * myId;
 	ExpListNode * myExpList;
@@ -325,6 +327,7 @@ public:
 		this->myExp = expIn;
 	}
 	virtual void unparse(std::ostream& out, int indent) override = 0;
+	bool nameAnalysis(SymbolTable * symTab) override = 0;
 protected:
 	ExpNode * myExp;
 };
@@ -334,6 +337,7 @@ public:
 	UnaryMinusNode(ExpNode * exp)
 	: UnaryExpNode(exp->getLine(), exp->getCol(), exp){ }
 	void unparse(std::ostream& out, int indent) override;
+	bool nameAnalysis(SymbolTable * symTab) { return true; };
 };
 
 class NotNode : public UnaryExpNode{
@@ -341,6 +345,7 @@ public:
 	NotNode(size_t lIn, size_t cIn, ExpNode * exp)
 	: UnaryExpNode(lIn, cIn, exp){ }
 	void unparse(std::ostream& out, int indent) override;
+	bool nameAnalysis(SymbolTable * symTab) { return true; };
 };
 
 class BinaryExpNode : public ExpNode{
@@ -354,6 +359,7 @@ public:
 	}
 	virtual void unparse(std::ostream& out, int indent) override;
 	virtual std::string myOp() = 0;
+	bool nameAnalysis(SymbolTable * symTab) override = 0;
 protected:
 	ExpNode * myExp1;
 	ExpNode * myExp2;
@@ -365,6 +371,7 @@ public:
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(lIn, cIn, exp1, exp2) { }
 	virtual std::string myOp() override { return "+"; }
+	bool nameAnalysis(SymbolTable * symTab) override;
 };
 
 class MinusNode : public BinaryExpNode{
@@ -373,6 +380,7 @@ public:
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(lIn, cIn, exp1, exp2){ }
 	virtual std::string myOp() override { return "-"; }
+	bool nameAnalysis(SymbolTable * symTab) override;
 };
 
 class TimesNode : public BinaryExpNode{
@@ -381,6 +389,7 @@ public:
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(lIn, cIn, exp1, exp2){ }
 	virtual std::string myOp() override { return "*"; }
+	bool nameAnalysis(SymbolTable * symTab) override;
 };
 
 class DivideNode : public BinaryExpNode{
@@ -389,6 +398,7 @@ public:
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(lIn, cIn, exp1, exp2){ }
 	virtual std::string myOp() override { return "/"; }
+	bool nameAnalysis(SymbolTable * symTab) override;
 };
 
 class AndNode : public BinaryExpNode{
@@ -397,6 +407,7 @@ public:
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(lIn, cIn, exp1, exp2){ }
 	virtual std::string myOp() override { return " and "; }
+	bool nameAnalysis(SymbolTable * symTab) override;
 };
 
 class OrNode : public BinaryExpNode{
@@ -405,6 +416,7 @@ public:
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(lIn, cIn, exp1, exp2){ }
 	virtual std::string myOp() override { return " or "; }
+	bool nameAnalysis(SymbolTable * symTab) override;
 };
 
 class EqualsNode : public BinaryExpNode{
@@ -413,6 +425,7 @@ public:
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(lineIn, colIn, exp1, exp2){ }
 	virtual std::string myOp() override { return "=="; }
+	bool nameAnalysis(SymbolTable * symTab) override;
 };
 
 class NotEqualsNode : public BinaryExpNode{
@@ -421,6 +434,7 @@ public:
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(lineIn, colIn, exp1, exp2){ }
 	virtual std::string myOp() override { return "!="; }
+	bool nameAnalysis(SymbolTable * symTab) override;
 };
 
 class LessNode : public BinaryExpNode{
@@ -429,6 +443,7 @@ public:
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(lineIn, colIn, exp1, exp2){ }
 	virtual std::string myOp() override { return "<"; }
+	bool nameAnalysis(SymbolTable * symTab) override;
 };
 
 class GreaterNode : public BinaryExpNode{
@@ -437,6 +452,7 @@ public:
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(lineIn, colIn, exp1, exp2){ }
 	virtual std::string myOp() override { return ">"; }
+	bool nameAnalysis(SymbolTable * symTab) override;
 };
 
 class LessEqNode : public BinaryExpNode{
@@ -445,6 +461,7 @@ public:
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(lineIn, colIn, exp1, exp2){ }
 	virtual std::string myOp() override { return "<="; }
+	bool nameAnalysis(SymbolTable * symTab) override;
 };
 
 class GreaterEqNode : public BinaryExpNode{
@@ -453,6 +470,7 @@ public:
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(lineIn, colIn, exp1, exp2){ }
 	virtual std::string myOp() override { return ">="; }
+	bool nameAnalysis(SymbolTable * symTab) override;
 };
 
 class AssignStmtNode : public StmtNode{
@@ -462,6 +480,7 @@ public:
 		myAssign = assignment;
 	}
 	void unparse(std::ostream& out, int indent) override;
+	bool nameAnalysis(SymbolTable * symTab) override;
 private:
 	AssignNode * myAssign;
 };
@@ -476,6 +495,7 @@ public:
 		myExp = exp;
 	}
 	void unparse(std::ostream& out, int indent) override;
+	bool nameAnalysis(SymbolTable * symTab) override;
 private:
 	ExpNode * myExp;
 };
@@ -487,6 +507,7 @@ public:
 		myExp = exp;
 	}
 	void unparse(std::ostream& out, int indent) override;
+	bool nameAnalysis(SymbolTable * symTab) override;
 private:
 	ExpNode * myExp;
 };
@@ -498,6 +519,7 @@ public:
 		myExp = exp;
 	}
 	void unparse(std::ostream& out, int indent) override;
+	bool nameAnalysis(SymbolTable * symTab) override;
 private:
 	ExpNode * myExp;
 };
@@ -509,6 +531,7 @@ public:
 		myExp = exp;
 	}
 	void unparse(std::ostream& out, int indent) override;
+	bool nameAnalysis(SymbolTable * symTab) override;
 private:
 	ExpNode * myExp;
 };
