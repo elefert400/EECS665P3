@@ -60,8 +60,8 @@ SymbolTable::SymbolTable(){
 
 bool ScopeTable::CheckDeclared(std::string check){
 	SemSymbol * mySem;
-	mySem = symbols->at(check);
-	if(mySem->GetDeclared() == true)
+	
+	if(symbols->count(check))
 	{
 		return true;
 	}
@@ -124,6 +124,6 @@ SemSymbol* SymbolTable::GetSem(std::string getThis)
 
 SemSymbol* ScopeTable::GetSem(std::string getThis)
 {
-	return symbols[getThis];
+	return symbols->at(getThis);
 }
 }
