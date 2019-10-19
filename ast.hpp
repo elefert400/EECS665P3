@@ -59,7 +59,7 @@ public:
 	virtual void setPtrDepth(size_t depth);
 	virtual size_t getPtrDepth(){ return myPtrDepth; }
 	virtual void printIndirection(std::ostream& out);
-	virtual std::string GetType();
+	virtual std::string GetType() = 0;
 	virtual bool nameAnalysis(SymbolTable * symTab) override;
 private:
 	size_t myPtrDepth;
@@ -111,7 +111,7 @@ public:
 	void unparse(std::ostream& out, int indent) override;
 	virtual std::string getString();
 	//sets symbol
-	bool SetSymbol(SemSymbol* symbol){ mySymbol = symbol; }
+	bool SetSymbol(SemSymbol* symbol);
 	virtual bool nameAnalysis(SymbolTable * symTab);
 private:
 	std::string myStrVal;
@@ -234,7 +234,6 @@ class IntNode : public TypeNode{
 public:
 	IntNode(size_t lIn, size_t cIn) : TypeNode(lIn, cIn){}
 	void unparse(std::ostream& out, int indent) override;
-	bool nameAnalysis(SymbolTable * symTab);
 	std::string GetType(){ return "Int"; }
 	bool nameAnalysis(SymbolTable * symTab) { return true; };
 };
@@ -598,6 +597,7 @@ public:
 		myCallExp = callExp;
 	}
 	void unparse(std::ostream& out, int indent) override;
+	bool nameAnalysis(SymbolTable * symTab) override;
 private:
 	CallExpNode * myCallExp;
 };

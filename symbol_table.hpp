@@ -1,6 +1,7 @@
 #ifndef LAKE_SYMBOL_TABLE_HPP
 #define LAKE_SYMBOL_TABLE_HPP
 #include <string>
+#include <iostream>
 #include <unordered_map>
 #include <list>
 
@@ -23,41 +24,46 @@ class SemSymbol {
 	// (i.e. the kind of the symbol (either a variable or function)
 	// and functions to get/set those fields
 	private:
-        size_t m_line;
-        size_t m_col;
-        bool m_isDeclared;
+        
 		//std::string m_Id;
-
+	protected: 
+		bool m_isDeclared;
+		size_t m_line;
+        size_t m_col;
     public:
 		//may end up discarding constructor
-        //SemSymbol(/*may need params*/);
-        virtual ~SemSymbol(){}
-		virtual void SetLineNum(size_t newLine) { m_line = newLine; }
-		virtual void SetColumnNum(size_t newColumn) { m_col = newColumn; }
-        virtual size_t GetLine(){ return m_line; }
-        virtual size_t GetCol(){ return m_col; }
+        SemSymbol(){ }
+        
+		virtual void SetLineNum(size_t newLine);
+		virtual void SetColumnNum(size_t newColumn);
+        size_t GetLine(){ return m_line; }
+        size_t GetCol(){ return m_col; }
 
-        virtual bool SetType(std::string type) = 0;
+        virtual bool SetType(std::string type);
         virtual void SetId(std::string Id);
         virtual void SetDeclared(bool isDeclared);
-
+		virtual std::string GetFullType();
 		virtual std::string GetType();
 		virtual std::string GetId();
 		virtual bool GetDeclared();
+		virtual char GetRepChar();
 };
 //added by Z/E
-class FuncSemSym : SemSymbol{
+class FuncSemSym : public SemSymbol{
     private:
         std::string m_returnType;
 		std::string m_argsList;
 		std::string m_name;
+		// size_t m_line;
+        // size_t m_col;
 
     public:
-        FuncSemSym(){ }
+        FuncSemSym() : SemSymbol(){ }
 		void SetArgsList(std::string argsList);
 		//sets the RETURN TYPE ONLY
 		bool SetType(std::string returnType);
 		void SetId(std::string Id);
+		void SetDeclared(bool isDeclared);
 
 		//returns (int,int) -> bool format of type as single string
 		std::string GetFullType();
@@ -65,16 +71,19 @@ class FuncSemSym : SemSymbol{
 		std::string GetType() { return m_returnType; }
 		std::string GetId() { return m_name; }
 		bool GetDeclared() { return true; }
+		char GetRepChar(){ return 'f'; }
+		void SetLineNum(size_t newLine) { m_line = newLine; }
+		void SetColumnNum(size_t newColumn) { m_col = newColumn; }
 };
 //added by Z/E
-class VarSemSym : SemSymbol{
+class VarSemSym : public SemSymbol{
 	private:
 		std::string m_type;
 		std::string m_name;
 		bool m_isDeclared;
 		int m_ptrDepth;
 	public:
-		VarSemSym(){ }
+		VarSemSym() : SemSymbol(){ }
 		bool SetType(std::string type);
 		void SetId(std::string Id);
 		void SetDeclared(bool isDeclared);
@@ -84,6 +93,10 @@ class VarSemSym : SemSymbol{
 		std::string GetId(){ return m_name; }
 		bool GetDeclared(){ return m_isDeclared; }
 		int GetPtrDepth(){ return m_ptrDepth; }
+		char GetRepChar(){ return 'v'; }
+		void SetLineNum(size_t newLine) { m_line = newLine; }
+		void SetColumnNum(size_t newColumn) { m_col = newColumn; }
+		std::string GetFullType(){ return(m_type); }
 };
 
 //A single scope. The symbol table is broken down into a
@@ -116,7 +129,7 @@ class SymbolTable{
 		// when a scope is exited, etc.
 		void addFront(ScopeTable* newScope);
 		//pops front of SymbolTable returning a ScopeTable
-		ScopeTable* pop();
+		void pop();
 		/*Error#2: iterate through list to check all scopes for
 				   given string in form of semSym*/
 		bool CheckDeclared(std::string check);

@@ -179,7 +179,12 @@ void IdNode::unparse(std::ostream& out, int indent){
 	}
 	out << myStrVal;
 	if (mySymbol != NULL){
-		out << "(" << mySymbol->getType() << ")";
+		if(mySymbol->GetRepChar() == 'v'){
+			out << "(" << mySymbol->GetType() << ")";
+		}
+		else{
+			out << "(" << mySymbol->GetFullType() << ")";
+		}		
 	}
 }
 

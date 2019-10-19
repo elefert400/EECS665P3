@@ -20,7 +20,10 @@ IdNode::IdNode(IDToken * token)
 : ExpNode(token->_line, token->_column), 
   myStrVal(token->value()),
   mySymbol(NULL){ }
-
+bool IdNode::SetSymbol(SemSymbol* symbol){
+	mySymbol = symbol; 
+	return true;
+}
 std::string IdNode::getString(){ return myStrVal; }
 
 DeclNode::DeclNode(size_t lIn, size_t cIn, IdNode * idIn)

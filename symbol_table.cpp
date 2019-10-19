@@ -28,7 +28,9 @@ void VarSemSym::SetDeclared(bool isDeclared){
 void VarSemSym::SetPtrDepth(int ptrDepth){
 	m_ptrDepth = ptrDepth;
 }
-
+void FuncSemSym::SetDeclared(bool isDeclared){
+	m_isDeclared = isDeclared;
+}
 void FuncSemSym::SetArgsList(std::string argsList){
 	m_argsList = argsList;
 }
@@ -43,9 +45,7 @@ std::string FuncSemSym::GetFullType(){
 	std::string fullType = m_argsList + "->" + m_returnType;
 	return fullType;
 }
-std::string FuncSemSym::GetArgsType(){
 
-}
 
 ScopeTable::ScopeTable(){
 	symbols = new HashMap<std::string, SemSymbol *>();
@@ -82,6 +82,7 @@ bool ScopeTable::Insert(SemSymbol* sym){
 	else{
 		//error 1
 		std::cerr << sym->GetLine() << "," << sym->GetCol() << "Multiply declared identifier" << "\n";
+		return false;
 	}
 }
 
@@ -90,7 +91,7 @@ void SymbolTable::addFront(ScopeTable* newScope)
 	scopeTableChain->push_front(newScope);
 }
 
-ScopeTable* SymbolTable::pop()
+void SymbolTable::pop()
 {
 	scopeTableChain->pop_front();
 }
@@ -107,14 +108,10 @@ bool SymbolTable::CheckDeclared(std::string check)
 			return true;
 		}
 	}
-	if(result == false)
-	{
-		//error message handled in stmt name_analysis
-		return false;
-	}
+	return result;
 }
 
-bool addSym(SemSymbol* newSym){
+bool SymbolTable::addSym(SemSymbol* newSym){
 	ScopeTable* top = scopeTableChain->front();
 	return top->Insert(newSym);
 }
