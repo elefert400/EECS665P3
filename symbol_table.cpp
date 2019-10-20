@@ -69,6 +69,7 @@ bool ScopeTable::Insert(SemSymbol* sym){
 	std::string myName = sym->GetId();
 	std::pair< HashMap<std::string, SemSymbol *>::iterator, bool> ret;
 	ret = symbols->insert(std::pair<std::string, SemSymbol *> (myName, sym));
+	//cout << ret.second << endl;
 	if(ret.second == false)
 	{
 		//cout << "This is my name" << myName << endl;

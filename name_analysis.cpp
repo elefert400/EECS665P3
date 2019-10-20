@@ -105,7 +105,7 @@ bool VarDeclNode::nameAnalysis(SymbolTable * symTab){
 	std::string varId = this->getDeclaredName();
 	VarSemSym* newSym = new VarSemSym();
 	newSym->SetId(varId);
-	//newSym->SetType();
+	newSym->SetType(varType->GetType());
 	if(varType->getPtrDepth()){
 		newSym->SetPtrDepth(varType->getPtrDepth());
 	}
