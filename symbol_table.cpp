@@ -69,14 +69,14 @@ bool ScopeTable::Insert(SemSymbol* sym){
 	std::string myName = sym->GetId();
 	std::pair< HashMap<std::string, SemSymbol *>::iterator, bool> ret;
 	ret = symbols->insert(std::pair<std::string, SemSymbol *> (myName, sym));
-	//cout << ret.second << endl;
-	if(ret.second == false)
+
+	if(ret.second == 1)
 	{
-		//cout << "This is my name" << myName << endl;
+
 		return true;
 	}
 	else{
-		//cout <<  "This is my name" << myName << endl;
+		
 		//error 1
 		std::cerr << sym->GetLine() << "," << sym->GetCol() << "Multiply declared identifier" << "\n";
 		return false;

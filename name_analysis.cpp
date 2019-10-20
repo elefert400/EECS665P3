@@ -77,8 +77,10 @@ bool IdNode::nameAnalysis(SymbolTable * symTab)
 {
 	if(symTab->CheckDeclared(myStrVal) == false)
 	{
+		cout << "Could not find a sym" << endl;
 		return false;
 	}
+	cout << "Found sym setting ptr" << endl;
 	SetSymbol(symTab->GetSem(myStrVal));
 	return true;
 }
@@ -105,7 +107,7 @@ bool VarDeclNode::nameAnalysis(SymbolTable * symTab){
 	std::string varId = this->getDeclaredName();
 	VarSemSym* newSym = new VarSemSym();
 	newSym->SetId(varId);
-	newSym->SetType(varType->GetType());
+	//newSym->SetType(varType->GetType());
 	if(varType->getPtrDepth()){
 		newSym->SetPtrDepth(varType->getPtrDepth());
 	}
@@ -177,8 +179,8 @@ bool FormalsListNode::nameAnalysis(SymbolTable* symTab){
 bool FnBodyNode::nameAnalysis(SymbolTable * symTab)
 {
 	bool result = true;
-	result = myStmtList->nameAnalysis(symTab) && result;
 	result = myVarDecls->nameAnalysis(symTab) && result;
+	result = myStmtList->nameAnalysis(symTab) && result;
 	return result;
 }
 
@@ -373,6 +375,7 @@ bool WhileStmtNode::nameAnalysis(SymbolTable * symTab)
 bool CallStmtNode::nameAnalysis(SymbolTable * symTab)
 {
 	bool result = true;
+	cout << "Entering call" << endl;
 	result = result && myCallExp->nameAnalysis(symTab);
 	return result;
 }

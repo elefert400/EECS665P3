@@ -97,7 +97,7 @@ class VarSemSym : public SemSymbol{
 		std::string GetFullType(){ return m_type; }
 		//returns int -> int -> bool format of type as single string
 		std::string GetType(){ return m_type; }
-		std::string GetId(){ cout << m_name << endl; return m_name; }
+		std::string GetId(){ return m_name; }
 		bool GetDeclared(){ return m_isDeclared; }
 		char GetRepChar(){ return 'v'; }
 		int GetPtrDepth(){ return m_ptrDepth; }
