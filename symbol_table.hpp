@@ -24,16 +24,16 @@ class SemSymbol {
 	// (i.e. the kind of the symbol (either a variable or function)
 	// and functions to get/set those fields
 	private:
-        
+
 		//std::string m_Id;
-	protected: 
+	protected:
 		bool m_isDeclared;
 		size_t m_line;
         size_t m_col;
     public:
 		//may end up discarding constructor
         SemSymbol(){ }
-        
+
         virtual size_t GetLine(){ return m_line; }
         virtual size_t GetCol(){ return m_col; }
 		virtual void SetLineNum(size_t newLine)=0;
@@ -67,12 +67,12 @@ class FuncSemSym : public SemSymbol{
 		bool SetType(std::string returnType){ m_returnType = returnType; return true; }
 		void SetId(std::string Id){ m_name = Id; }
 		void SetDeclared(bool isDeclared){ m_isDeclared = isDeclared; }
-		
+
 		//returns (int,int) -> bool format of type as single string
 		std::string GetFullType();
 		//gets the return type only
 		std::string GetType(){ return m_returnType; }
-		std::string GetId(){ return m_name; }
+		std::string GetId(){  return m_name; }
 		bool GetDeclared(){ return true; }
 		char GetRepChar(){ return 'f'; }
 		void SetArgsList(std::string argsList){ m_argsList = argsList; }
@@ -97,10 +97,10 @@ class VarSemSym : public SemSymbol{
 		std::string GetFullType(){ return m_type; }
 		//returns int -> int -> bool format of type as single string
 		std::string GetType(){ return m_type; }
-		std::string GetId(){ return m_name; }
+		std::string GetId(){ cout << m_name << endl; return m_name; }
 		bool GetDeclared(){ return m_isDeclared; }
 		char GetRepChar(){ return 'v'; }
-		int GetPtrDepth(){ return m_ptrDepth; }		
+		int GetPtrDepth(){ return m_ptrDepth; }
 		void SetPtrDepth(int ptrDepth){ m_ptrDepth = ptrDepth; }
 };
 

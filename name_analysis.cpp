@@ -104,13 +104,15 @@ bool VarDeclNode::nameAnalysis(SymbolTable * symTab){
 	TypeNode* varType = this->getTypeNode();
 	std::string varId = this->getDeclaredName();
 	VarSemSym* newSym = new VarSemSym();
+	newSym->SetId(varId);
+	//newSym->SetType();
 	if(varType->getPtrDepth()){
 		newSym->SetPtrDepth(varType->getPtrDepth());
-	}	
+	}
 	newSym->SetLineNum(varType->getLine());
 	newSym->SetColumnNum(varType->getCol());
 	newSym->SetType(varType->GetType());
-	
+
 	return(nameAnalysisOk && symTab->addSym(newSym));
 	// throw new ToDoError("[DELETE ME] I'm a varDecl"
 	// 	" you should add the information from my"
@@ -140,7 +142,7 @@ bool FnDeclNode::nameAnalysis(SymbolTable * symTab){
 
 	//create new scope and add it to the front of symTab
 	ScopeTable* newScope = new ScopeTable();
-	symTab->addFront(newScope);	
+	symTab->addFront(newScope);
 	//call NA on formalsList and fnBodyNode
 	nameAnalysisOk = (nameAnalysisOk && myFormals->nameAnalysis(symTab));
 	nameAnalysisOk = (nameAnalysisOk && myBody->nameAnalysis(symTab));

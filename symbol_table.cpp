@@ -52,7 +52,7 @@ ScopeTable::ScopeTable(){
 
 bool ScopeTable::CheckDeclared(std::string check){
 	SemSymbol * mySem;
-	
+
 	if(symbols->count(check))
 	{
 		return true;
@@ -71,9 +71,11 @@ bool ScopeTable::Insert(SemSymbol* sym){
 	ret = symbols->insert(std::pair<std::string, SemSymbol *> (myName, sym));
 	if(ret.second == false)
 	{
+		//cout << "This is my name" << myName << endl;
 		return true;
 	}
 	else{
+		//cout <<  "This is my name" << myName << endl;
 		//error 1
 		std::cerr << sym->GetLine() << "," << sym->GetCol() << "Multiply declared identifier" << "\n";
 		return false;
