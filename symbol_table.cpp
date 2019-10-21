@@ -125,8 +125,19 @@ bool SymbolTable::addSym(SemSymbol* newSym){
 
 SemSymbol* SymbolTable::GetSem(std::string getThis)
 {
+	
 	ScopeTable* front = scopeTableChain->front();
-	return front->GetSem(getThis);
+	if(this->CheckDeclared(getThis)){
+		for (std::list<ScopeTable *>::iterator it=scopeTableChain->begin(); it!=scopeTableChain->end(); ++it)
+		{
+			ScopeTable* temp = *it;
+			if(temp->CheckDeclared(getThis))
+			{
+				return temp->GetSem(getThis);
+			}
+		}
+	}
+	return(nullptr);
 }
 
 

@@ -234,7 +234,7 @@ class IntNode : public TypeNode{
 public:
 	IntNode(size_t lIn, size_t cIn) : TypeNode(lIn, cIn){}
 	void unparse(std::ostream& out, int indent) override;
-	std::string GetType(){ return "Int"; }
+	std::string GetType(){ return "int"; }
 	bool nameAnalysis(SymbolTable * symTab) { return true; };
 };
 
@@ -242,7 +242,7 @@ class BoolNode : public TypeNode{
 public:
 	BoolNode(size_t lIn, size_t cIn) : TypeNode(lIn, cIn) { }
 	void unparse(std::ostream& out, int indent) override;
-	std::string GetType(){ return "Bool"; }
+	std::string GetType(){ return "bool"; }
 	bool nameAnalysis(SymbolTable * symTab) { return true; };
 };
 
@@ -251,7 +251,7 @@ public:
 	VoidNode(size_t lIn, size_t cIn)
 	: TypeNode(lIn, cIn){}
 	void unparse(std::ostream& out, int indent) override;
-	std::string GetType(){ return "Void"; }
+	std::string GetType(){ return "void"; }
 	bool nameAnalysis(SymbolTable * symTab) { return true; };
 };
 

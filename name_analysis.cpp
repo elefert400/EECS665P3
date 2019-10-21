@@ -77,10 +77,9 @@ bool IdNode::nameAnalysis(SymbolTable * symTab)
 {
 	if(symTab->CheckDeclared(myStrVal) == false)
 	{
-		cout << "Could not find a sym" << endl;
+		std::cerr << getLine() << "," << getCol() <<"Undeclared Identifier";
 		return false;
 	}
-	cout << "Found sym setting ptr" << endl;
 	SetSymbol(symTab->GetSem(myStrVal));
 	return true;
 }
@@ -129,6 +128,7 @@ bool FormalDeclNode::nameAnalysis(SymbolTable * symTab)
 	TypeNode* varType = this->getTypeNode();
 	std::string varId = this->getDeclaredName();
 	VarSemSym* newSym = new VarSemSym();
+	newSym->SetId(varId);
 	newSym->SetPtrDepth(varType->getPtrDepth());
 	newSym->SetLineNum(varType->getLine());
 	newSym->SetColumnNum(varType->getCol());
@@ -141,17 +141,18 @@ bool FnDeclNode::nameAnalysis(SymbolTable * symTab){
 	FuncSemSym* newSym = new FuncSemSym();
 	newSym->SetType(this->GetType());
 	newSym->SetId(this->getDeclaredName());
-
+	nameAnalysisOk = nameAnalysisOk && symTab->addSym(newSym);
 	//create new scope and add it to the front of symTab
 	ScopeTable* newScope = new ScopeTable();
 	symTab->addFront(newScope);
 	//call NA on formalsList and fnBodyNode
 	nameAnalysisOk = (nameAnalysisOk && myFormals->nameAnalysis(symTab));
+	newSym->SetArgsList(myFormals->GetFormalsType());
 	nameAnalysisOk = (nameAnalysisOk && myBody->nameAnalysis(symTab));
 	//pop scope
 	symTab->pop();
-	newSym->SetArgsList(myFormals->GetFormalsType());
-	return(nameAnalysisOk && symTab->addSym(newSym));
+	
+	return(nameAnalysisOk);
 	/*
 	needs to be filled in
 	*/
@@ -171,7 +172,12 @@ bool FormalsListNode::nameAnalysis(SymbolTable* symTab){
 		//get type of the formalDeclNode that was just processed
 		std::string currArgType = FormalDeclNodeTemp->GetType();
 		//append the type onto formalsTypeString for later access in FnDeclNode as its argsType;
-		formalsTypeString = formalsTypeString + "," + currArgType;
+		if(formalsTypeString == ""){
+			formalsTypeString = formalsTypeString + currArgType;
+		}else{
+			formalsTypeString = formalsTypeString + "," + currArgType;
+		}
+		
 	}
 	return result;
 }
